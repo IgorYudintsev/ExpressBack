@@ -15,8 +15,7 @@ const books = [{ volume: 'Book1' }, { volume: 'Book2' }];
 const todos = [
     {
         todolistId: 1,
-        filter: 'toLearn',
-        title: "What to learn",
+        title: "Monday",
         tasks: [
             { taskId: 1, title: "HTML&CSS", isDone: true, priority: "high" },
             { taskId: 2, title: "JS", isDone: false, priority: "medium" }
@@ -24,40 +23,19 @@ const todos = [
     },
     {
         todolistId: 2,
-        filter: 'toDo',
-        title: "What to do",
+        title: "Tuesday",
         tasks: [
             { taskId: 1, title: "HTML&CSS2", isDone: false, priority: "low" },
             { taskId: 2, title: "JS2", isDone: true, priority: "high" }
         ],
     }
 ];
-// app.get("/todos", (req: Request, res: Response) => {
-//     res.send(todos);
-// });
 app.get("/todos", (req, res) => {
-    const keyFilter = req.query.keyFilter;
-    if (!keyFilter) {
-        res.send(todos);
-        return;
-    }
-    if (keyFilter !== "active" && keyFilter !== "completed" && keyFilter !== "all") {
-        res.status(400).send("Invalid filter. Use 'all', 'active' or 'completed'");
-        return;
-    }
-    const filteredTodos = todos.map(todo => (Object.assign(Object.assign({}, todo), { tasks: todo.tasks.filter(task => keyFilter === "active" ? !task.isDone :
-            keyFilter === "completed" ? task.isDone :
-                true) })));
-    res.send(filteredTodos);
-});
-app.get("/todos/:filterValue", (req, res) => {
-    const filterValue = req.params.filterValue;
-    const filteredTodos = todos.filter(todo => todo.filter === filterValue);
-    if (filterValue === "toLearn" || filterValue === "toDo") {
-        res.send(filteredTodos);
+    if (!todos || todos.length === 0) {
+        res.status(404).send("No todos found");
     }
     else {
-        res.status(404).send("Not Found. Invalid filter. Use 'toLearn' or 'toDo");
+        res.send(todos);
     }
 });
 app.get("/books", (req, res) => {
