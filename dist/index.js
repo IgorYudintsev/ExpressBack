@@ -15,16 +15,18 @@ app.get("/", (req, res) => {
 const books = [{ volume: 'Book1' }, { volume: 'Book2' }];
 const todos = [
     {
+        todolistId: 1,
+        filter: 'toLearn',
         title: "What to learn",
-        filter: "all",
         tasks: [
             { taskId: 1, title: "HTML&CSS", isDone: true, priority: "high" },
             { taskId: 2, title: "JS", isDone: false, priority: "medium" }
         ],
     },
     {
+        todolistId: 2,
+        filter: 'toDo',
         title: "What to do",
-        filter: "all",
         tasks: [
             { taskId: 1, title: "HTML&CSS2", isDone: false, priority: "low" },
             { taskId: 2, title: "JS2", isDone: true, priority: "high" }
@@ -34,13 +36,15 @@ const todos = [
 app.get("/todos", (req, res) => {
     res.send(todos);
 });
-app.get("/todos/active", (req, res) => {
-    const activeTodos = todos.map(todo => (Object.assign(Object.assign({}, todo), { tasks: todo.tasks.filter(task => !task.isDone) })));
-    res.send(activeTodos);
-});
-app.get("/todos/completed", (req, res) => {
-    const completedTodos = todos.map(todo => (Object.assign(Object.assign({}, todo), { tasks: todo.tasks.filter(task => task.isDone) })));
-    res.send(completedTodos);
+app.get("/todos/:filterValue", (req, res) => {
+    const filterValue = req.params.filterValue;
+    const filteredTodos = todos.filter(todo => todo.filter === filterValue);
+    if (filterValue === "toLearn" || filterValue === "toDo") {
+        res.send(filteredTodos);
+    }
+    else {
+        res.status(404).send("Not Found. Invalid filter. Use 'toLearn' or 'toDo");
+    }
 });
 app.get("/books", (req, res) => {
     res.send(books);
