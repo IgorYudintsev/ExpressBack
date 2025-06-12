@@ -47,11 +47,30 @@ const todos:ObjectType[]=[
     }
 ]
 
-
-
 app.get("/todos", (req: Request, res: Response) => {
     res.send(todos);
 });
+
+app.get("/todos/active", (req: Request, res: Response) => {
+    const activeTodos = todos.map(todo => ({
+        ...todo,
+        tasks: todo.tasks.filter(task => !task.isDone)
+    }));
+    res.send(activeTodos);
+});
+
+app.get("/todos/completed", (req, res) => {
+    const completedTodos = todos.map(todo => ({
+        ...todo,
+        tasks: todo.tasks.filter(task => task.isDone)
+    }));
+    res.send(completedTodos);
+});
+
+
+
+
+
 
 app.get("/books", (req: Request, res: Response) => {
     res.send(books);
