@@ -11,6 +11,14 @@ app.use((0, cors_1.default)()); // Включаем CORS, чтобы разре�
 app.get("/", (req, res) => {
     res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
 });
+const todos = [{ title: 'Express' }, { title: 'React' }];
+const books = [{ volume: 'Book1' }, { volume: 'Book2' }];
+app.get("/todos", (req, res) => {
+    res.send(todos);
+});
+app.get("/books", (req, res) => {
+    res.send(books);
+});
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
