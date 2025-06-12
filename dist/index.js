@@ -11,7 +11,6 @@ app.use((0, cors_1.default)()); // Включаем CORS, чтобы разре�
 app.get("/", (req, res) => {
     res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
 });
-// const todos=[{title:'Express'},{title:'React'}]
 const books = [{ volume: 'Book1' }, { volume: 'Book2' }];
 const todos = [
     {
@@ -33,8 +32,23 @@ const todos = [
         ],
     }
 ];
+// app.get("/todos", (req: Request, res: Response) => {
+//     res.send(todos);
+// });
 app.get("/todos", (req, res) => {
-    res.send(todos);
+    const keyFilter = req.query.keyFilter;
+    if (!keyFilter) {
+        res.send(todos);
+        return;
+    }
+    if (keyFilter !== "active" && keyFilter !== "completed" && keyFilter !== "all") {
+        res.status(400).send("Invalid filter. Use 'all', 'active' or 'completed'");
+        return;
+    }
+    const filteredTodos = todos.map(todo => (Object.assign(Object.assign({}, todo), { tasks: todo.tasks.filter(task => keyFilter === "active" ? !task.isDone :
+            keyFilter === "completed" ? task.isDone :
+                true) })));
+    res.send(filteredTodos);
 });
 app.get("/todos/:filterValue", (req, res) => {
     const filterValue = req.params.filterValue;
