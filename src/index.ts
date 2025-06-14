@@ -61,6 +61,36 @@ app.get("/todos", (req: Request, res: Response) => {
     }
 });
 
+app.post("/todos", (req: Request, res: Response) => {
+    try {
+        // Валидация
+        if (!req.body) {
+            res.status(400).json({ error: "Request body is missing" });
+            return;
+        }
+
+        const { title } = req.body;
+
+        if (!title?.trim() ) {
+            res.status(400).json({ error: "Title is required" });
+            return;
+        }
+
+        // Создание нового списка
+        const newTodoList: ObjectType = {
+            todolistId: 3,
+            title: title.trim(),
+            tasks: []
+        };
+
+        todos.push(newTodoList);
+        res.status(201).json(newTodoList);
+
+    } catch (error) {
+        console.error("Error creating todo list:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 
 

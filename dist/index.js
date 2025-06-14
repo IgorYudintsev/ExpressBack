@@ -48,6 +48,32 @@ app.get("/todos", (req, res) => {
         res.send(todos);
     }
 });
+app.post("/todos", (req, res) => {
+    try {
+        // Валидация
+        if (!req.body) {
+            res.status(400).json({ error: "Request body is missing" });
+            return;
+        }
+        const { title } = req.body;
+        if (!(title === null || title === void 0 ? void 0 : title.trim())) {
+            res.status(400).json({ error: "Title is required" });
+            return;
+        }
+        // Создание нового списка
+        const newTodoList = {
+            todolistId: 3,
+            title: title.trim(),
+            tasks: []
+        };
+        todos.push(newTodoList);
+        res.status(201).json(newTodoList);
+    }
+    catch (error) {
+        console.error("Error creating todo list:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
