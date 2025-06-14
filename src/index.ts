@@ -2,19 +2,12 @@ import express,{Request,Response} from 'express';
 const app = express();
 const port = 3000;
 import cors from "cors";
-
+app.use(express.json());// Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use(cors()); // Включаем CORS, чтобы разрешить запросы с других доменов
-
-app.get("/", (req: Request, res: Response) => {
-    res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
-});
-
-const books=[{volume:'Book1'},{volume:'Book2'}]
 
 type ObjectType = {
     todolistId:number
     title: string
-    // filter: FilterValuesType
     tasks: Array<TasksType>
 }
 export type TasksType = {
@@ -24,9 +17,7 @@ export type TasksType = {
     isDone: boolean
 }
 
-export type FilterValuesType = "toLearn" | "toDo"
-export type KeyFilterType="active" | "completed"
-
+const books=[{volume:'Book1'},{volume:'Book2'}]
 const todos:ObjectType[]=[
     {
         todolistId:1,
@@ -46,6 +37,21 @@ const todos:ObjectType[]=[
     }
 ]
 
+app.get("/", (req: Request, res: Response) => {
+    res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
+});
+
+app.get("/books", (req: Request, res: Response) => {
+    res.send(books);
+});
+
+app.post("/books", (req: Request, res: Response) => {
+    const { volume } = req.body as { volume: string }; // Приведение типа
+    const newBook = { volume };
+    books.push(newBook);
+    res.status(201).json(newBook);
+});
+
 
 app.get("/todos", (req: Request, res: Response) => {
     if (!todos || todos.length === 0) {
@@ -56,9 +62,8 @@ app.get("/todos", (req: Request, res: Response) => {
 });
 
 
-app.get("/books", (req: Request, res: Response) => {
-    res.send(books);
-});
+
+
 
 
 app.listen(port, () => {

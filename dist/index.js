@@ -7,10 +7,8 @@ const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const port = 3000;
 const cors_1 = __importDefault(require("cors"));
+app.use(express_1.default.json()); // Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use((0, cors_1.default)()); // Включаем CORS, чтобы разрешить запросы с других доменов
-app.get("/", (req, res) => {
-    res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
-});
 const books = [{ volume: 'Book1' }, { volume: 'Book2' }];
 const todos = [
     {
@@ -30,6 +28,18 @@ const todos = [
         ],
     }
 ];
+app.get("/", (req, res) => {
+    res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
+});
+app.get("/books", (req, res) => {
+    res.send(books);
+});
+app.post("/books", (req, res) => {
+    const { volume } = req.body; // Приведение типа
+    const newBook = { volume };
+    books.push(newBook);
+    res.status(201).json(newBook);
+});
 app.get("/todos", (req, res) => {
     if (!todos || todos.length === 0) {
         res.status(404).send("No todos found");
@@ -37,9 +47,6 @@ app.get("/todos", (req, res) => {
     else {
         res.send(todos);
     }
-});
-app.get("/books", (req, res) => {
-    res.send(books);
 });
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
