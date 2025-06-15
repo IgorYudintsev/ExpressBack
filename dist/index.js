@@ -183,6 +183,37 @@ app.put("/todos/:id", (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+app.put("/todos/:todolistID/tasks/:taskID", (req, res) => {
+    try {
+        if (!req.body) {
+            res.status(400).json({ error: "Request body is missing" });
+            return;
+        }
+        const { title } = req.body;
+        if (!(title === null || title === void 0 ? void 0 : title.trim())) {
+            res.status(400).json({ error: "Title is required" });
+            return;
+        }
+        const currentTodo = todos.find(el => el.todolistId === Number(req.params.todolistID));
+        if (currentTodo) {
+            let currentTask = currentTodo.tasks.find(el => el.taskId === Number(req.params.taskID));
+            if (currentTask) {
+                currentTask.title = title.trim();
+                res.status(200).json(todos);
+            }
+            else {
+                res.status(404).json({ message: "Task Not Found" });
+            }
+        }
+        else {
+            res.status(404).json({ message: "Todo Not Found" });
+        }
+    }
+    catch (error) {
+        console.error("Error updating todo list:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
