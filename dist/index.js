@@ -9,7 +9,14 @@ const port = 3000;
 const cors_1 = __importDefault(require("cors"));
 app.use(express_1.default.json()); // Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use((0, cors_1.default)()); // Включаем CORS, чтобы разрешить запросы с других доменов
-const books = [{ volume: 'Book1' }, { volume: 'Book2' }];
+// const books=[{volume:'Book1'},{volume:'Book2'}]
+const books = [{
+        id: 1,
+        volume: 'Book1'
+    }, {
+        id: 2,
+        volume: 'Book2'
+    }];
 const todos = [
     {
         todolistId: 1,
@@ -36,9 +43,19 @@ app.get("/books", (req, res) => {
 });
 app.post("/books", (req, res) => {
     const { volume } = req.body; // Приведение типа
-    const newBook = { volume };
+    const newBook = { volume, id: 3 };
     books.push(newBook);
     res.status(201).json(newBook);
+});
+app.delete("/books/:id", (req, res) => {
+    let currentBook = books.find(el => el.id === Number(req.params.id));
+    if (currentBook) {
+        books.splice(books.indexOf(currentBook), 1);
+        res.send(books);
+    }
+    else {
+        res.status(404).json({ message: "Book Not Found" });
+    }
 });
 app.get("/todos", (req, res) => {
     if (!todos || todos.length === 0) {
@@ -81,7 +98,6 @@ app.post("/task", (req, res) => {
             return;
         }
         const { todolistId, title, priority = "medium" } = req.body;
-        console.log(req.body);
         if (!todolistId) {
             res.status(400).json({ error: "Todolist ID is required" });
             return;

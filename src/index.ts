@@ -18,7 +18,16 @@ export type TasksType = {
     isDone: boolean
 }
 
-const books=[{volume:'Book1'},{volume:'Book2'}]
+// const books=[{volume:'Book1'},{volume:'Book2'}]
+const books = [{
+    id:1,
+    volume: 'Book1'
+}, {
+    id:2,
+    volume: 'Book2'
+}]
+
+
 const todos:ObjectType[]=[
     {
         todolistId:1,
@@ -48,10 +57,25 @@ app.get("/books", (req: Request, res: Response) => {
 
 app.post("/books", (req: Request, res: Response) => {
     const { volume } = req.body as { volume: string }; // Приведение типа
-    const newBook = { volume };
+    const newBook = { volume,id:3 };
     books.push(newBook);
     res.status(201).json(newBook);
 });
+
+
+app.delete("/books/:id", (req: Request, res: Response) => {
+    let currentBook = books.find(el => el.id === Number(req.params.id));
+    if (currentBook) {
+        books.splice(books.indexOf(currentBook), 1);
+        res.send(books);
+    } else {
+        res.status(404).json({message: "Book Not Found"});
+    }
+});
+
+
+
+
 
 
 app.get("/todos", (req: Request, res: Response) => {
@@ -102,7 +126,6 @@ app.post("/task", (req: Request, res: Response) => {
 
         const { todolistId, title, priority = "medium" } = req.body;
 
-        console.log(req.body)
 
         if (!todolistId) {
             res.status(400).json({ error: "Todolist ID is required" });
@@ -144,9 +167,6 @@ app.post("/task", (req: Request, res: Response) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
-
-
-
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
