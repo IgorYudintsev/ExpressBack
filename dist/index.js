@@ -132,6 +132,16 @@ app.post("/task", (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+app.delete("/todos/:id", (req, res) => {
+    let currentTodo = todos.find(el => el.todolistId === Number(req.params.id));
+    if (currentTodo) {
+        todos.splice(todos.indexOf(currentTodo), 1);
+        res.send(todos);
+    }
+    else {
+        res.status(404).json({ message: "Todo Not Found" });
+    }
+});
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
