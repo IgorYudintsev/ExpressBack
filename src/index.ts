@@ -179,6 +179,22 @@ app.delete("/todos/:id", (req: Request, res: Response) => {
     }
 });
 
+app.delete("/todos/:todolistID/tasks/:taskID", (req: Request, res: Response) => {
+    let currentTodo=todos.find(el => el.todolistId === Number(req.params.todolistID));
+    if(currentTodo){
+        let currentTask=currentTodo.tasks.find(el=>el.taskId===Number(req.params.taskID))
+        if(currentTask){
+            currentTodo.tasks.splice( currentTodo.tasks.indexOf(currentTask),1);
+            res.send(todos);
+        }else{
+            res.status(404).json({message: "Task Not Found"});
+        }
+    }else{
+        res.status(404).json({message: "Todo Not Found"});
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
