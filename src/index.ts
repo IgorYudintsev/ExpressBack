@@ -3,6 +3,7 @@ const app = express();
 const port = 3000;
 import cors from "cors";
 import {debuglog} from "node:util";
+import {booksRouter} from "./routes/books-router";
 app.use(express.json());// Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use(cors()); // Включаем CORS, чтобы разрешить запросы с других доменов
 
@@ -18,14 +19,14 @@ export type TasksType = {
     isDone: boolean
 }
 
-// const books=[{volume:'Book1'},{volume:'Book2'}]
-const books = [{
-    id:1,
-    volume: 'Book1'
-}, {
-    id:2,
-    volume: 'Book2'
-}]
+
+// const books = [{
+//     id:1,
+//     volume: 'Book1'
+// }, {
+//     id:2,
+//     volume: 'Book2'
+// }]
 
 
 const todos:ObjectType[]=[
@@ -51,28 +52,31 @@ app.get("/", (req: Request, res: Response) => {
     res.json({ message: "Hello TypeScript!" }); // JSON, а не просто текст
 });
 
-app.get("/books", (req: Request, res: Response) => {
-    res.send(books);
-});
+app.use('/books', booksRouter)
 
-app.post("/books", (req: Request, res: Response) => {
-    const { volume } = req.body as { volume: string }; // Приведение типа
-    const newBook = { volume,id:3 };
-    books.push(newBook);
-    res.status(201).json(newBook);
-});
-
-
-app.delete("/books/:id", (req: Request, res: Response) => {
-    let currentBook = books.find(el => el.id === Number(req.params.id));
-    if (currentBook) {
-        books.splice(books.indexOf(currentBook), 1);
-        res.send(books);
-    } else {
-        res.status(404).json({message: "Book Not Found"});
-    }
-});
-
+//
+// app.get("/books", (req: Request, res: Response) => {
+//     res.send(books);
+// });
+//
+// app.post("/books", (req: Request, res: Response) => {
+//     const { volume } = req.body as { volume: string }; // Приведение типа
+//     const newBook = { volume,id:3 };
+//     books.push(newBook);
+//     res.status(201).json(newBook);
+// });
+//
+//
+// app.delete("/books/:id", (req: Request, res: Response) => {
+//     let currentBook = books.find(el => el.id === Number(req.params.id));
+//     if (currentBook) {
+//         books.splice(books.indexOf(currentBook), 1);
+//         res.send(books);
+//     } else {
+//         res.status(404).json({message: "Book Not Found"});
+//     }
+// });
+//
 
 
 
