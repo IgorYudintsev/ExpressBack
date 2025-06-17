@@ -9,5 +9,11 @@ const books = [{
 export const booksRepository={
     getBooks() {
         return books;
-    }
+    },
+
+    postBooks( volume: string) {
+        const newBook = {id: 3, volume};
+        books.push(newBook);
+        return newBook;
+    },
 }

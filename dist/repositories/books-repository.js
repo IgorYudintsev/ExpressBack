@@ -11,5 +11,10 @@ const books = [{
 exports.booksRepository = {
     getBooks() {
         return books;
-    }
+    },
+    postBooks(volume) {
+        const newBook = { id: 3, volume };
+        books.push(newBook);
+        return newBook;
+    },
 };
