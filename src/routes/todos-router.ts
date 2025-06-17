@@ -1,49 +1,10 @@
 import express, {Request, Response} from "express";
 import { body, validationResult } from 'express-validator';
 import {todosRepository} from "../repositories/todos-repository";
+import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
+import {titleValidation} from "../midlewares/basicValidations";
 export const todosRouter = express.Router();
 
-// type ObjectType = {
-//     todolistId:number
-//     title: string
-//     tasks: Array<TasksType>
-// }
-// export type TasksType = {
-//     taskId: number
-//     title: string
-//     priority:"high" | "medium"| "low"
-//     isDone: boolean
-// }
-//
-// const todos:ObjectType[]=[
-//     {
-//         todolistId:1,
-//         title: "Monday",
-//         tasks: [
-//             {taskId: 1, title: "HTML&CSS", isDone: true,priority:"high"},
-//             {taskId: 2, title: "JS", isDone: false,priority:"medium"}
-//         ],
-//     },
-//     {
-//         todolistId:2,
-//         title: "Tuesday",
-//         tasks: [
-//             {taskId: 1, title: "HTML&CSS2", isDone: false,priority:"low"},
-//             {taskId: 2, title: "JS2", isDone: true,priority:"high"}
-//         ],
-//     }
-// ]
-
-
-
-
-// todosRouter.get("/", (req: Request, res: Response) => {
-//     if (!todos || todos.length === 0) {
-//         res.status(404).send("No todos found");
-//     }else{
-//         res.send(todos);
-//     }
-// });
 
 todosRouter.get("/", (req: Request, res: Response) => {
     const foundTodos = todosRepository.getTodos()
@@ -53,6 +14,19 @@ todosRouter.get("/", (req: Request, res: Response) => {
         res.send(foundTodos);
     }
 });
+
+todosRouter.post("/",
+    titleValidation,
+    textfieldValidationMidleware,
+    (req: Request, res: Response) => {
+        const {title} = req.body;
+        const postedTodos = todosRepository.postTodo(title)
+        if(postedTodos){
+            res.status(201).json(postedTodos);
+        }else{
+            res.status(500).json({error: "Internal server error"});
+        }
+    });
 
 
 // todosRouter.post("/", (req: Request, res: Response) => {

@@ -33,5 +33,13 @@ export const todosRepository={
     getTodos(){
         return todos;
     },
-
+    postTodo( title: string) {
+        const newTodoList: ObjectType = {
+            todolistId: 3,
+            title: title.trim(),
+            tasks: []
+        };
+        todos.push(newTodoList);
+        return todos
+    },
 }

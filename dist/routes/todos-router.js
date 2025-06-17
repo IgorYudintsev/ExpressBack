@@ -6,44 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.todosRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const todos_repository_1 = require("../repositories/todos-repository");
+const textfieldValidationMidleware_1 = require("../midlewares/textfieldValidationMidleware");
+const basicValidations_1 = require("../midlewares/basicValidations");
 exports.todosRouter = express_1.default.Router();
-// type ObjectType = {
-//     todolistId:number
-//     title: string
-//     tasks: Array<TasksType>
-// }
-// export type TasksType = {
-//     taskId: number
-//     title: string
-//     priority:"high" | "medium"| "low"
-//     isDone: boolean
-// }
-//
-// const todos:ObjectType[]=[
-//     {
-//         todolistId:1,
-//         title: "Monday",
-//         tasks: [
-//             {taskId: 1, title: "HTML&CSS", isDone: true,priority:"high"},
-//             {taskId: 2, title: "JS", isDone: false,priority:"medium"}
-//         ],
-//     },
-//     {
-//         todolistId:2,
-//         title: "Tuesday",
-//         tasks: [
-//             {taskId: 1, title: "HTML&CSS2", isDone: false,priority:"low"},
-//             {taskId: 2, title: "JS2", isDone: true,priority:"high"}
-//         ],
-//     }
-// ]
-// todosRouter.get("/", (req: Request, res: Response) => {
-//     if (!todos || todos.length === 0) {
-//         res.status(404).send("No todos found");
-//     }else{
-//         res.send(todos);
-//     }
-// });
 exports.todosRouter.get("/", (req, res) => {
     const foundTodos = todos_repository_1.todosRepository.getTodos();
     if (!foundTodos || foundTodos.length === 0) {
@@ -51,6 +16,16 @@ exports.todosRouter.get("/", (req, res) => {
     }
     else {
         res.send(foundTodos);
+    }
+});
+exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => {
+    const { title } = req.body;
+    const postedTodos = todos_repository_1.todosRepository.postTodo(title);
+    if (postedTodos) {
+        res.status(201).json(postedTodos);
+    }
+    else {
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 // todosRouter.post("/", (req: Request, res: Response) => {
