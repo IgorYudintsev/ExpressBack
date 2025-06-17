@@ -58,5 +58,12 @@ export const todosRepository={
             return null
         }
     },
+    deleteTodo( id: string) {
+        let currentTodo = todos.find(el => el.todolistId === Number(id));
+        if (currentTodo) {
+            todos.splice(todos.indexOf(currentTodo), 1);
+            return todos
+        }
+    },
 
 }
