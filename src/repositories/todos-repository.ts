@@ -79,6 +79,13 @@ export const todosRepository={
         currentTodo.tasks.splice(currentTodo.tasks.indexOf(currentTask), 1);
         return todos;
     },
+    putTodo(todolistID: string,title: string){
+        const currentTodo = todos.find(el => el.todolistId === Number(todolistID));
+        if (currentTodo) {
+            currentTodo.title = title.trim();
+            return todos
+        }
+    },
 
 
 

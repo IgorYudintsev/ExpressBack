@@ -67,21 +67,21 @@ exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => {
         (0, switchErrors_1.switchErrors)(res, error.message);
     }
 });
-// todosRouter.delete("/:todolistID/tasks/:taskID", (req: Request, res: Response) => {
-//     let currentTodo=todos.find(el => el.todolistId === Number(req.params.todolistID));
-//     if(currentTodo){
-//         let currentTask=currentTodo.tasks.find(el=>el.taskId===Number(req.params.taskID))
-//         if(currentTask){
-//             currentTodo.tasks.splice( currentTodo.tasks.indexOf(currentTask),1);
-//             res.send(todos);
-//         }else{
-//             res.status(404).json({message: "Task Not Found"});
-//         }
-//     }else{
-//         res.status(404).json({message: "Todo Not Found"});
-//     }
-// });
-//
+exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) => {
+    try {
+        const { title } = req.body;
+        const updatedTodo = todos_repository_1.todosRepository.putTodo(req.params.id, title);
+        if (updatedTodo) {
+            res.status(200).json(updatedTodo);
+        }
+        else {
+            res.status(404).json({ message: "Todo Not Found" });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 // todosRouter.put("/:id", (req: Request, res: Response) => {
 //     try {
 //         if (!req.body) {
