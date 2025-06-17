@@ -28,37 +28,21 @@ exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValid
         res.status(500).json({ error: "Internal server error" });
     }
 });
-// todosRouter.post("/", (req: Request, res: Response) => {
-//     try {
-//         // Валидация
-//         if (!req.body) {
-//             res.status(400).json({ error: "Request body is missing" });
-//             return;
-//         }
-//
-//         const { title } = req.body;
-//
-//         if (!title?.trim() ) {
-//             res.status(400).json({ error: "Title is required" });
-//             return;
-//         }
-//
-//         // Создание нового списка
-//         const newTodoList: ObjectType = {
-//             todolistId: 3,
-//             title: title.trim(),
-//             tasks: []
-//         };
-//
-//         todos.push(newTodoList);
-//         res.status(201).json(newTodoList);
-//
-//     } catch (error) {
-//         console.error("Error creating todo list:", error);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// });
-//
+exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => {
+    const { id, title, priority = "medium" } = req.body;
+    try {
+        const postedTask = todos_repository_1.todosRepository.postTask(id, title, priority);
+        if (!postedTask) {
+            res.status(404).json({ error: "Todolist not found" });
+            return;
+        }
+        res.status(201).json(postedTask);
+    }
+    catch (error) {
+        console.error("Error creating todo list:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 //
 // todosRouter.post("/task", (req: Request, res: Response) => {
 //     try {

@@ -42,4 +42,21 @@ export const todosRepository={
         todos.push(newTodoList);
         return todos
     },
+    postTask(todolistId:string, title: string,priority:"high" | "medium" | "low") {
+        const newTask: TasksType = {
+            taskId: 3,
+            title: title.trim(),
+            isDone: false,
+            priority: priority as "high" | "medium" | "low"
+        };
+
+        const currentTodoList = todos.find(el => el.todolistId === Number(todolistId));
+        if (currentTodoList) {
+            currentTodoList.tasks.push(newTask);
+            return newTask;
+        }else{
+            return null
+        }
+    },
+
 }

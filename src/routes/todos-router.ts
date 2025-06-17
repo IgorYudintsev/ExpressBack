@@ -2,7 +2,7 @@ import express, {Request, Response} from "express";
 import { body, validationResult } from 'express-validator';
 import {todosRepository} from "../repositories/todos-repository";
 import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
-import {titleValidation} from "../midlewares/basicValidations";
+import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
 export const todosRouter = express.Router();
 
 
@@ -28,38 +28,29 @@ todosRouter.post("/",
         }
     });
 
+todosRouter.post("/task",
+    titleValidation,
+    idValidation,
+    priorityValidation,
+    textfieldValidationMidleware,
+    (req: Request, res: Response) => {
+        const {id, title, priority = "medium"} = req.body;
 
-// todosRouter.post("/", (req: Request, res: Response) => {
-//     try {
-//         // Валидация
-//         if (!req.body) {
-//             res.status(400).json({ error: "Request body is missing" });
-//             return;
-//         }
-//
-//         const { title } = req.body;
-//
-//         if (!title?.trim() ) {
-//             res.status(400).json({ error: "Title is required" });
-//             return;
-//         }
-//
-//         // Создание нового списка
-//         const newTodoList: ObjectType = {
-//             todolistId: 3,
-//             title: title.trim(),
-//             tasks: []
-//         };
-//
-//         todos.push(newTodoList);
-//         res.status(201).json(newTodoList);
-//
-//     } catch (error) {
-//         console.error("Error creating todo list:", error);
-//         res.status(500).json({ error: "Internal server error" });
-//     }
-// });
-//
+        try {
+            const postedTask = todosRepository.postTask(id, title, priority)
+            if (!postedTask) {
+                res.status(404).json({error: "Todolist not found"});
+                return;
+            }
+            res.status(201).json(postedTask);
+
+        } catch (error) {
+            console.error("Error creating todo list:", error);
+            res.status(500).json({error: "Internal server error"});
+        }
+    });
+
+
 //
 // todosRouter.post("/task", (req: Request, res: Response) => {
 //     try {
