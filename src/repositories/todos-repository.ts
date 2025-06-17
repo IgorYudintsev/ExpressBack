@@ -65,5 +65,21 @@ export const todosRepository={
             return todos
         }
     },
+    deleteTask(todolistID: string, taskID: string) {
+        let currentTodo = todos.find(el => el.todolistId === Number(todolistID));
+        if (!currentTodo) {
+            throw new Error("Todo Not Found");
+        }
+
+        let currentTask = currentTodo.tasks.find(el => el.taskId === Number(taskID));
+        if (!currentTask) {
+            throw new Error("Task Not Found");
+        }
+
+        currentTodo.tasks.splice(currentTodo.tasks.indexOf(currentTask), 1);
+        return todos;
+    },
+
+
 
 }

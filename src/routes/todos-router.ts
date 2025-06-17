@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import {todosRepository} from "../repositories/todos-repository";
 import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
 import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
+import {switchErrors} from "../midlewares/switchErrors";
 export const todosRouter = express.Router();
 
 
@@ -56,6 +57,20 @@ todosRouter.delete("/:id", (req: Request, res: Response) => {
         res.send(todosAfterRemove);
     } else {
         res.status(404).json({message: "Todo Not Found"});
+    }
+});
+
+todosRouter.delete("/:todolistID/tasks/:taskID", (req: Request, res: Response) => {
+    try {
+        const {todolistID, taskID} = req.params;
+        const result = todosRepository.deleteTask(todolistID, taskID);
+        res.send(result);
+    } catch (error) {
+        if (!(error instanceof Error)) {
+            res.status(500).json({message: "Unknown error occurred"});
+            return;
+        }
+        switchErrors(res,error.message)
     }
 });
 
