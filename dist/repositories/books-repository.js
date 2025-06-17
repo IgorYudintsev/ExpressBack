@@ -17,4 +17,11 @@ exports.booksRepository = {
         books.push(newBook);
         return newBook;
     },
+    deleteBooks(id) {
+        const currentBook = books.find(el => el.id === Number(id));
+        if (currentBook) {
+            books.splice(books.indexOf(currentBook), 1);
+            return books;
+        }
+    }
 };
