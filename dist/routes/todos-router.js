@@ -82,34 +82,23 @@ exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) =
         res.status(500).json({ error: "Internal server error" });
     }
 });
-// todosRouter.put("/:id", (req: Request, res: Response) => {
-//     try {
-//         if (!req.body) {
-//             res.status(400).json({error: "Request body is missing"});
-//             return;
-//         }
-//
-//         const {title} = req.body;
-//
-//         if (!title?.trim()) {
-//             res.status(400).json({error: "Title is required"});
-//             return;
-//         }
-//
-//         const currentTodo = todos.find(el => el.todolistId === Number(req.params.id));
-//
-//         if (currentTodo) {
-//             currentTodo.title = title.trim();
-//             res.status(200).json(todos);
-//         } else {
-//             res.status(404).json({message: "Todo Not Found"});
-//         }
-//
-//     } catch (error) {
-//         console.error("Error updating todo list:", error);
-//         res.status(500).json({error: "Internal server error"});
-//     }
-// });
+exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => {
+    try {
+        const { todolistID, taskID } = req.params;
+        const { title } = req.body;
+        const updatedTodos = todos_repository_1.todosRepository.putTask(todolistID, taskID, title);
+        res.status(200).json(updatedTodos);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            (0, switchErrors_1.switchErrors)(res, error.message);
+        }
+        else {
+            console.error("Unknown error updating task:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+});
 //
 // todosRouter.put("/:todolistID/tasks/:taskID", (req: Request, res: Response) => {
 //     try {
