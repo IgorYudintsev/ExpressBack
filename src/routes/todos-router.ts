@@ -1,13 +1,13 @@
 import express, {Request, Response} from "express";
-import {todosRepository} from "../repositories/todos-repository";
+import {ObjectType, todosRepository} from "../repositories/todos-repository";
 import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
 import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
 import {switchErrors} from "../midlewares/switchErrors";
 export const todosRouter = express.Router();
 
 
-todosRouter.get("/", (req: Request, res: Response) => {
-    const foundTodos = todosRepository.getTodos()
+todosRouter.get("/", async(req: Request, res: Response) => {
+    const foundTodos:ObjectType[] = await todosRepository.getTodos()
     if (!foundTodos || foundTodos.length === 0) {
         res.status(404).send("No todos found");
     } else {
@@ -18,9 +18,9 @@ todosRouter.get("/", (req: Request, res: Response) => {
 todosRouter.post("/",
     titleValidation,
     textfieldValidationMidleware,
-    (req: Request, res: Response) => {
+    async(req: Request, res: Response) => {
         const {title} = req.body;
-        const postedTodos = todosRepository.postTodo(title)
+        const postedTodos =await todosRepository.postTodo(title)
         if(postedTodos){
             res.status(201).json(postedTodos);
         }else{
@@ -33,11 +33,11 @@ todosRouter.post("/task",
     idValidation,
     priorityValidation,
     textfieldValidationMidleware,
-    (req: Request, res: Response) => {
+    async(req: Request, res: Response) => {
         const {id, title, priority = "medium"} = req.body;
 
         try {
-            const postedTask = todosRepository.postTask(id, title, priority)
+            const postedTask = await todosRepository.postTask(id, title, priority)
             if (!postedTask) {
                 res.status(404).json({error: "Todolist not found"});
                 return;
@@ -50,8 +50,9 @@ todosRouter.post("/task",
         }
     });
 
-todosRouter.delete("/:id", (req: Request, res: Response) => {
-    const todosAfterRemove = todosRepository.deleteTodo(req.params.id)
+todosRouter.delete("/:id",
+    async(req: Request, res: Response) => {
+    const todosAfterRemove =await todosRepository.deleteTodo(req.params.id)
     if (todosAfterRemove) {
         res.send(todosAfterRemove);
     } else {
@@ -59,10 +60,11 @@ todosRouter.delete("/:id", (req: Request, res: Response) => {
     }
 });
 
-todosRouter.delete("/:todolistID/tasks/:taskID", (req: Request, res: Response) => {
+todosRouter.delete("/:todolistID/tasks/:taskID",
+    async (req: Request, res: Response) => {
     try {
         const {todolistID, taskID} = req.params;
-        const result = todosRepository.deleteTask(todolistID, taskID);
+        const result = await todosRepository.deleteTask(todolistID, taskID);
         res.send(result);
     } catch (error) {
         if (!(error instanceof Error)) {
@@ -75,11 +77,10 @@ todosRouter.delete("/:todolistID/tasks/:taskID", (req: Request, res: Response) =
 
 todosRouter.put("/:id",
     titleValidation,
-    (req: Request, res: Response) => {
-
+    async (req: Request, res: Response) => {
         try {
             const {title} = req.body;
-            const updatedTodo = todosRepository.putTodo(req.params.id, title)
+            const updatedTodo = await todosRepository.putTodo(req.params.id, title)
             if (updatedTodo) {
                 res.status(200).json(updatedTodo);
             } else {
@@ -93,12 +94,12 @@ todosRouter.put("/:id",
 todosRouter.put("/:todolistID/tasks/:taskID",
     titleValidation,
     textfieldValidationMidleware,
-    (req: Request, res: Response) => {
+  async  (req: Request, res: Response) => {
         try {
             const {todolistID, taskID} = req.params;
             const {title} = req.body;
 
-            const updatedTodos = todosRepository.putTask(todolistID, taskID, title);
+            const updatedTodos =await todosRepository.putTask(todolistID, taskID, title);
             res.status(200).json(updatedTodos);
 
         } catch (error) {
