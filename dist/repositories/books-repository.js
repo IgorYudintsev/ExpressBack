@@ -10,33 +10,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksRepository = void 0;
-const books = [{
-        id: 1,
-        volume: 'Book1'
-    }, {
-        id: 2,
-        volume: 'Book2'
-    }];
+const index_1 = require("../index");
+// const books:BookType[] = [{
+//     id:1,
+//     volume: 'Book1'
+// }, {
+//     id:2,
+//     volume: 'Book2'
+// }]
 exports.booksRepository = {
+    // async getBooks():Promise<BookType[]> {
+    //      return books;
+    //  },
     getBooks() {
         return __awaiter(this, void 0, void 0, function* () {
-            return books;
+            return yield index_1.currentCollection.find().toArray();
         });
     },
-    postBooks(volume) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const newBook = { id: 3, volume };
-            books.push(newBook);
-            return newBook;
-        });
-    },
-    deleteBooks(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const currentBook = books.find(el => el.id === Number(id));
-            if (currentBook) {
-                books.splice(books.indexOf(currentBook), 1);
-                return books;
-            }
-        });
-    }
+    // async postBooks( volume: string):Promise<BookType>  {
+    //      const newBook:BookType = {id: 3, volume};
+    //      books.push(newBook);
+    //      return newBook;
+    //  },
+    //
+    // async deleteBooks( id: string):Promise<BookType[] |undefined>  {
+    //      const currentBook:BookType | undefined = books.find(el => el.id === Number(id));
+    //      if (currentBook) {
+    //          books.splice(books.indexOf(currentBook), 1);
+    //          return books
+    //      }
+    //  }
 };

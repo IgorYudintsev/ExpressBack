@@ -15,27 +15,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const books_repository_1 = require("../repositories/books-repository");
-const express_validator_1 = require("express-validator");
 exports.booksRouter = express_1.default.Router();
 exports.booksRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const foundBooks = yield books_repository_1.booksRepository.getBooks();
     res.send(foundBooks);
 }));
-exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({ min: 3, max: 30 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        res.status(400).json({ error: "Invalid volume: min:1, max:30" });
-    }
-    const { volume } = req.body;
-    const newBook = yield books_repository_1.booksRepository.postBooks(volume);
-    res.status(201).json(newBook);
-}));
-exports.booksRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let currentBook = yield books_repository_1.booksRepository.deleteBooks(req.params.id);
-    if (currentBook) {
-        res.send(currentBook);
-    }
-    else {
-        res.status(404).json({ message: "Book Not Found" });
-    }
-}));
+// booksRouter.post("/",
+//     body('volume').isLength({min:3, max:30}),
+//     async (req: Request, res: Response)=> {
+//
+//         const errors = validationResult(req);
+//         if (!errors.isEmpty()) {
+//             res.status(400).json({ error: "Invalid volume: min:1, max:30" });
+//         }
+//
+//         const { volume} = req.body as {  volume: string };
+//         const newBook: BookType=await booksRepository.postBooks(volume)
+//         res.status(201).json(newBook);
+//     });
+//
+//
+// booksRouter.delete("/:id", async(req: Request, res: Response) => {
+//     let currentBook =await booksRepository.deleteBooks(req.params.id)
+//     if (currentBook) {
+//         res.send(currentBook);
+//     } else {
+//         res.status(404).json({message: "Book Not Found"});
+//     }
+// });
