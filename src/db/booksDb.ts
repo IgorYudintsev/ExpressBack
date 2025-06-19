@@ -4,6 +4,12 @@ dotenv.config();
 
  const mongoURI = process.env.MONGODB_URI
 
+if (process.env.NODE_ENV !== 'production') {
+    console.log("🔥 MONGODB_URI =", process.env.MONGODB_URI);
+    console.log("🔥 NODE_ENV =", process.env.NODE_ENV);
+}
+
+
 if (!mongoURI) {
     throw new Error("MONGODB_URI is not set in environment variables");
 }
