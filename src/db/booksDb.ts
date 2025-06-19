@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
  // const mongoURI = process.env.MONGODB_URI
-const mongoURI = "mongodb://mongo:dbTBMqHbexqkrpeLnCzRNXBZzTUNyibm@interchange.proxy.rlwy.net:58173/kiberRus?authSource=admin";
+// const mongoURI = "mongodb://mongo:dbTBMqHbexqkrpeLnCzRNXBZzTUNyibm@interchange.proxy.rlwy.net:58173/kiberRus?authSource=admin";
+const mongoURI = process.env.MONGODB_URI;
 
 
 if (process.env.NODE_ENV !== 'production') {
