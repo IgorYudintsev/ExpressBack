@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
  const mongoURI = process.env.MONGODB_URI
-// const mongoURI = "mongodb://mongo:dbTBMqHbexqkrpeLnCzRNXBZzTUNyibm@interchange.proxy.rlwy.net:58173/kiberRus?authSource=admin";
 
 if (!mongoURI) {
     throw new Error("MONGODB_URI is not set in environment variables");
