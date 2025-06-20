@@ -11,24 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksRepository = void 0;
 const index_1 = require("../index");
-// const books:BookType[] = [{
-//     id:1,
-//     volume: 'Book1'
-// }, {
-//     id:2,
-//     volume: 'Book2'
-// }]
+const mongodb_1 = require("mongodb");
 exports.booksRepository = {
     getBooks() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield index_1.currentCollection.find().toArray();
         });
     },
-    // async postBooks( volume: string):Promise<BookType>  {
-    //     const newBook:BookType = {id: 3, volume};
-    //     books.push(newBook);
-    //     return newBook;
-    // },
     postBooks(volume) {
         return __awaiter(this, void 0, void 0, function* () {
             const newBook = { volume };
@@ -40,12 +29,18 @@ exports.booksRepository = {
             return insertedBook;
         });
     },
-    //
-    // async deleteBooks( id: string):Promise<BookType[] |undefined>  {
-    //      const currentBook:BookType | undefined = books.find(el => el.id === Number(id));
-    //      if (currentBook) {
-    //          books.splice(books.indexOf(currentBook), 1);
-    //          return books
-    //      }
-    //  }
+    deleteBooks(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // const currentBook:BookType | undefined = books.find(el => el.id === Number(id));
+            // if (currentBook) {
+            //     books.splice(books.indexOf(currentBook), 1);
+            //     return books
+            // }
+            const result = yield index_1.currentCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            if (result.deletedCount === 0) {
+                throw new Error("Книга с таким _id не найдена");
+            }
+            return yield index_1.currentCollection.find().toArray();
+        });
+    }
 };

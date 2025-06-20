@@ -26,14 +26,14 @@ booksRouter.post("/",
     });
 
 
-// booksRouter.delete("/:id", async(req: Request, res: Response) => {
-//     let currentBook =await booksRepository.deleteBooks(req.params.id)
-//     if (currentBook) {
-//         res.send(currentBook);
-//     } else {
-//         res.status(404).json({message: "Book Not Found"});
-//     }
-// });
+booksRouter.delete("/:id", async(req: Request, res: Response) => {
+    let currentBook =await booksRepository.deleteBooks(req.params.id)
+    if (currentBook) {
+        res.send(currentBook);
+    } else {
+        res.status(404).json({message: "Book Not Found"});
+    }
+});
 
 
 

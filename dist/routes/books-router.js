@@ -30,11 +30,12 @@ exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({
     const newBook = yield books_repository_1.booksRepository.postBooks(volume);
     res.status(201).json(newBook);
 }));
-// booksRouter.delete("/:id", async(req: Request, res: Response) => {
-//     let currentBook =await booksRepository.deleteBooks(req.params.id)
-//     if (currentBook) {
-//         res.send(currentBook);
-//     } else {
-//         res.status(404).json({message: "Book Not Found"});
-//     }
-// });
+exports.booksRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let currentBook = yield books_repository_1.booksRepository.deleteBooks(req.params.id);
+    if (currentBook) {
+        res.send(currentBook);
+    }
+    else {
+        res.status(404).json({ message: "Book Not Found" });
+    }
+}));
