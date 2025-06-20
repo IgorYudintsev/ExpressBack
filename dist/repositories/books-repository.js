@@ -19,19 +19,27 @@ const index_1 = require("../index");
 //     volume: 'Book2'
 // }]
 exports.booksRepository = {
-    // async getBooks():Promise<BookType[]> {
-    //      return books;
-    //  },
     getBooks() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield index_1.currentCollection.find().toArray();
         });
     },
     // async postBooks( volume: string):Promise<BookType>  {
-    //      const newBook:BookType = {id: 3, volume};
-    //      books.push(newBook);
-    //      return newBook;
-    //  },
+    //     const newBook:BookType = {id: 3, volume};
+    //     books.push(newBook);
+    //     return newBook;
+    // },
+    postBooks(volume) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newBook = { volume };
+            const result = yield index_1.currentCollection.insertOne(newBook);
+            const insertedBook = yield index_1.currentCollection.findOne({ _id: result.insertedId });
+            if (!insertedBook) {
+                throw new Error("Ошибка: документ не найден после вставки");
+            }
+            return insertedBook;
+        });
+    },
     //
     // async deleteBooks( id: string):Promise<BookType[] |undefined>  {
     //      const currentBook:BookType | undefined = books.find(el => el.id === Number(id));

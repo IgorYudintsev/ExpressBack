@@ -36,6 +36,3 @@ const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 startApp();
-// app.listen(port, () => {
-//     console.log(`Server running on http://localhost:${port}`);
-// });
