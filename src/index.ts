@@ -7,7 +7,8 @@ import {todosRouter} from "./routes/todos-router";
 import {booksDb, client} from "./db/booksDb";
 import {BookType} from "./repositories/books-repository";
 import {TodoType} from "./repositories/todos-repository";
-import {todosDb} from "./db/todosDb"; // если ты завёл отдельный репозиторий
+import {todosDb} from "./db/todosDb";
+import {connectToDb} from "./db/mongoDB"; // если ты завёл отдельный репозиторий
 app.use(express.json());// Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use(cors()); // Включаем CORS, чтобы разрешить запросы с других доменов
 
@@ -27,8 +28,8 @@ export const todosCollection = currentDB.collection<TodoType>('todos');
 
 
 const startApp = async () => {
-    await booksDb();
-    await todosDb();
+    await connectToDb('books');
+    await connectToDb('todos');
     app.listen(port, () => {
         console.log(`Example app listening on port: ${port}`);
     });

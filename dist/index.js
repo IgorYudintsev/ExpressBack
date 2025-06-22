@@ -20,7 +20,7 @@ const cors_1 = __importDefault(require("cors"));
 const books_router_1 = require("./routes/books-router");
 const todos_router_1 = require("./routes/todos-router");
 const booksDb_1 = require("./db/booksDb");
-const todosDb_1 = require("./db/todosDb"); // если ты завёл отдельный репозиторий
+const mongoDB_1 = require("./db/mongoDB"); // если ты завёл отдельный репозиторий
 app.use(express_1.default.json()); // Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use((0, cors_1.default)()); // Включаем CORS, чтобы разрешить запросы с других доменов
 app.get("/", (req, res) => {
@@ -32,8 +32,8 @@ const currentDB = booksDb_1.client.db('kiberRus');
 exports.booksCollection = currentDB.collection('books');
 exports.todosCollection = currentDB.collection('todos');
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, booksDb_1.booksDb)();
-    yield (0, todosDb_1.todosDb)();
+    yield (0, mongoDB_1.connectToDb)('books');
+    yield (0, mongoDB_1.connectToDb)('todos');
     app.listen(port, () => {
         console.log(`Example app listening on port: ${port}`);
     });
