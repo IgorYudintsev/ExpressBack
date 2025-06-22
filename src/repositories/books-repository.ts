@@ -1,5 +1,6 @@
-import {currentCollection} from "../index";
+// import {currentCollection} from "../index";
 import {ObjectId} from "mongodb";
+import {booksCollection} from "../index";
 
 export type BookType={
     _id?: ObjectId,
@@ -8,13 +9,13 @@ export type BookType={
 
 export const booksRepository={
       async  getBooks():Promise<BookType[]> {
-        return await  currentCollection.find().toArray();
+        return await  booksCollection.find().toArray();
     },
 
     async postBooks( volume: string):Promise<BookType>  {
         const newBook:BookType = {volume};
-        const result = await currentCollection.insertOne(newBook);
-        const insertedBook = await currentCollection.findOne({ _id: result.insertedId });
+        const result = await booksCollection.insertOne(newBook);
+        const insertedBook = await booksCollection.findOne({ _id: result.insertedId });
         if (!insertedBook) {
             throw new Error("Ошибка: документ не найден после вставки");
         }
@@ -22,16 +23,10 @@ export const booksRepository={
     },
 
    async deleteBooks( id: string):Promise<BookType[] |undefined>  {
-        // const currentBook:BookType | undefined = books.find(el => el.id === Number(id));
-        // if (currentBook) {
-        //     books.splice(books.indexOf(currentBook), 1);
-        //     return books
-        // }
-       const result = await currentCollection.deleteOne({ _id: new ObjectId(id) });
-
+       const result = await booksCollection.deleteOne({ _id: new ObjectId(id) });
        if (result.deletedCount === 0) {
            throw new Error("Книга с таким _id не найдена");
        }
-       return await currentCollection.find().toArray();
+       return await booksCollection.find().toArray();
    }
 }

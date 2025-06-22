@@ -6,6 +6,8 @@ import {booksRouter} from "./routes/books-router";
 import {todosRouter} from "./routes/todos-router";
 import {booksDb, client} from "./db/booksDb";
 import {BookType} from "./repositories/books-repository";
+import {TodoType} from "./repositories/todos-repository";
+import {todosDb} from "./db/todosDb"; // если ты завёл отдельный репозиторий
 app.use(express.json());// Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use(cors()); // Включаем CORS, чтобы разрешить запросы с других доменов
 
@@ -18,17 +20,19 @@ app.use('/books', booksRouter)
 app.use('/todos', todosRouter)
 
 const currentDB=client.db('kiberRus')
-export  const currentCollection=currentDB.collection<BookType>('books')
+export  const booksCollection=currentDB.collection<BookType>('books')
+export const todosCollection = currentDB.collection<TodoType>('todos');
+
 
 
 
 const startApp = async () => {
     await booksDb();
+    await todosDb();
     app.listen(port, () => {
         console.log(`Example app listening on port: ${port}`);
     });
 };
 
 startApp();
-
 
