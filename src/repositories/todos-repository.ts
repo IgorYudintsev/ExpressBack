@@ -1,7 +1,6 @@
-import {booksCollection, todosCollection} from "../index";
+import { todosCollection} from "../index";
 import {ObjectId, WithId} from "mongodb";
 import {v1} from "uuid";
-import {booksRepository} from "./books-repository";
 
 export type TodoType = {
      _id?: ObjectId,
@@ -34,6 +33,12 @@ export const todosRepository={
        },
 
     async postTask(todolistId:string, title: string,priority:"high" | "medium" | "low"):Promise<TasksType | null>  {
+
+        const todo = await todosCollection.findOne({ _id: new ObjectId(todolistId) });
+        if (!todo) {
+            throw new Error("❌ Todo list not found");
+        }
+
         const newTask: TasksType = {
             taskId: v1(),
             title: title.trim(),
@@ -62,8 +67,8 @@ export const todosRepository={
           },
 
    async deleteTask(todolistID: string, taskID: string):Promise<TodoType[]> {
-       const todo = await todosCollection.findOne({ _id: new ObjectId(todolistID) });
 
+       const todo = await todosCollection.findOne({ _id: new ObjectId(todolistID) });
        if (!todo) {
            throw new Error("❌ Todo list not found");
        }
@@ -94,18 +99,29 @@ export const todosRepository={
         return await todosCollection.find().toArray();
     },
 
- // async  putTask(todolistID: string, taskID: string, title: string) {
- //        const currentTodo:ObjectType | undefined = todos.find(el => el.todolistId === Number(todolistID));
- //        if (!currentTodo) {
- //            throw new Error("Todo Not Found");
- //        }
- //
- //        const currentTask:TasksType | undefined  = currentTodo.tasks.find(el => el.taskId === Number(taskID));
- //        if (!currentTask) {
- //            throw new Error("Task Not Found");
- //        }
- //
- //        currentTask.title = title.trim();
- //        return todos;
- //    }
+ async  putTask(todolistID: string, taskID: string, title: string) {
+     const todo = await todosCollection.findOne({ _id: new ObjectId(todolistID) });
+
+     if (!todo) {
+         throw new Error("❌ Todo list not found");
+     }
+
+     const taskExists = todo.tasks.some(task => task.taskId === taskID);
+     if (!taskExists) {
+         throw new Error("❌ Task not found in specified todo list");
+     }
+
+     const trimmedTitle = title.trim();
+
+    await todosCollection.updateOne(
+         { _id: new ObjectId(todolistID), "tasks.taskId": taskID },
+         {
+             $set: {
+                 "tasks.$.title": trimmedTitle
+             }
+         }
+     );
+
+     return await todosCollection.find().toArray();
+    }
 }
