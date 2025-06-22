@@ -77,18 +77,22 @@ export const todosRepository={
            { _id: new ObjectId(todolistID) },
            { $pull: { tasks: { taskId: taskID } } }
        );
-
-       const allTodos = await todosCollection.find().toArray();
-       return allTodos;
+       return await todosCollection.find().toArray();
     },
 
-    // async putTodo(todolistID: string,title: string):Promise<ObjectType[] | undefined>{
-    //     const currentTodo:ObjectType | undefined = todos.find(el => el.todolistId === Number(todolistID));
-    //     if (currentTodo) {
-    //         currentTodo.title = title.trim();
-    //         return todos
-    //     }
-    // },
+    async putTodo(todolistID: string,title: string):Promise<TodoType[] | undefined>{
+        const trimmedTitle = title.trim();
+
+        const result = await todosCollection.updateOne(
+            { _id: new ObjectId(todolistID) },
+            { $set: { title: trimmedTitle } }
+        );
+
+        if (result.matchedCount === 0) {
+            throw new Error("❌ Todo list not found");
+        }
+        return await todosCollection.find().toArray();
+    },
 
  // async  putTask(todolistID: string, taskID: string, title: string) {
  //        const currentTodo:ObjectType | undefined = todos.find(el => el.todolistId === Number(todolistID));

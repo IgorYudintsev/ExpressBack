@@ -76,22 +76,21 @@ exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter
         (0, switchErrors_1.switchErrors)(res, error.message);
     }
 }));
-// todosRouter.put("/:id",
-//     titleValidation,
-//     async (req: Request, res: Response) => {
-//         try {
-//             const {title} = req.body;
-//             const updatedTodo = await todosRepository.putTodo(req.params.id, title)
-//             if (updatedTodo) {
-//                 res.status(200).json(updatedTodo);
-//             } else {
-//                 res.status(404).json({message: "Todo Not Found"});
-//             }
-//         } catch (error) {
-//             res.status(500).json({error: "Internal server error"});
-//         }
-//     });
-//
+exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { title } = req.body;
+        const updatedTodo = yield todos_repository_1.todosRepository.putTodo(req.params.id, title);
+        if (updatedTodo) {
+            res.status(200).json(updatedTodo);
+        }
+        else {
+            res.status(404).json({ message: "Todo Not Found" });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+}));
 // todosRouter.put("/:todolistID/tasks/:taskID",
 //     titleValidation,
 //     textfieldValidationMidleware,
