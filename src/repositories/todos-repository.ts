@@ -1,6 +1,7 @@
 import {booksCollection, todosCollection} from "../index";
 import {ObjectId} from "mongodb";
 import {v1} from "uuid";
+import {booksRepository} from "./books-repository";
 
 export type TodoType = {
      _id?: ObjectId,
@@ -52,13 +53,13 @@ export const todosRepository={
         }
     },
 
-    // async deleteTodo( id: string):Promise<ObjectType[] | undefined> {
-    //     let currentTodo:ObjectType| undefined  = todos.find(el => el.todolistId === Number(id));
-    //     if (currentTodo) {
-    //         todos.splice(todos.indexOf(currentTodo), 1);
-    //         return todos
-    //     }
-    // },
+    async deleteTodo( id: string):Promise<TodoType[] | undefined> {
+        const result = await todosCollection.deleteOne({ _id: new ObjectId(id) });
+        if (result.deletedCount === 0) {
+            throw new Error("Тудулист с таким _id не найдена");
+        }
+        return await todosCollection.find().toArray();
+          },
 
    // async deleteTask(todolistID: string, taskID: string):Promise<ObjectType[]> {
    //      let currentTodo:ObjectType| undefined  = todos.find(el => el.todolistId === Number(todolistID));

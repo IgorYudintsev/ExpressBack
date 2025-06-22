@@ -52,16 +52,15 @@ exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValid
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-//
-// todosRouter.delete("/:id",
-//     async(req: Request, res: Response) => {
-//     const todosAfterRemove =await todosRepository.deleteTodo(req.params.id)
-//     if (todosAfterRemove) {
-//         res.send(todosAfterRemove);
-//     } else {
-//         res.status(404).json({message: "Todo Not Found"});
-//     }
-// });
+exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const todosAfterRemove = yield todos_repository_1.todosRepository.deleteTodo(req.params.id);
+    if (todosAfterRemove) {
+        res.send(todosAfterRemove);
+    }
+    else {
+        res.status(404).json({ message: "Todo Not Found" });
+    }
+}));
 //
 // todosRouter.delete("/:todolistID/tasks/:taskID",
 //     async (req: Request, res: Response) => {
