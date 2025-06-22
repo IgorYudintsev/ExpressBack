@@ -1,5 +1,6 @@
 import {booksCollection, todosCollection} from "../index";
 import {ObjectId} from "mongodb";
+import {v1} from "uuid";
 
 export type TodoType = {
      _id?: ObjectId,
@@ -31,22 +32,25 @@ export const todosRepository={
         return insertedTodo;
        },
 
-    // async postTask(todolistId:string, title: string,priority:"high" | "medium" | "low"):Promise<TasksType | null>  {
-    //     const newTask: TasksType = {
-    //         taskId: 3,
-    //         title: title.trim(),
-    //         isDone: false,
-    //         priority: priority as "high" | "medium" | "low"
-    //     };
-    //
-    //     const currentTodoList = todos.find(el => el.todolistId === Number(todolistId));
-    //     if (currentTodoList) {
-    //         currentTodoList.tasks.push(newTask);
-    //         return newTask;
-    //     }else{
-    //         return null
-    //     }
-    // },
+    async postTask(todolistId:string, title: string,priority:"high" | "medium" | "low"):Promise<TasksType | null>  {
+        const newTask: TasksType = {
+            taskId: v1(),
+            title: title.trim(),
+            isDone: false,
+            priority: priority as "high" | "medium" | "low"
+        };
+
+        const updateResult = await todosCollection.updateOne(
+            { _id: new ObjectId(todolistId) },
+            { $push: { tasks: newTask } }
+        );
+
+        if (updateResult.modifiedCount === 1) {
+            return newTask;
+        } else {
+            return null;
+        }
+    },
 
     // async deleteTodo( id: string):Promise<ObjectType[] | undefined> {
     //     let currentTodo:ObjectType| undefined  = todos.find(el => el.todolistId === Number(id));

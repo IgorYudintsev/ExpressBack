@@ -28,27 +28,27 @@ todosRouter.post("/",
         }
     });
 
-// todosRouter.post("/task",
-//     titleValidation,
-//     idValidation,
-//     priorityValidation,
-//     textfieldValidationMidleware,
-//     async(req: Request, res: Response) => {
-//         const {id, title, priority = "medium"} = req.body;
-//
-//         try {
-//             const postedTask = await todosRepository.postTask(id, title, priority)
-//             if (!postedTask) {
-//                 res.status(404).json({error: "Todolist not found"});
-//                 return;
-//             }
-//             res.status(201).json(postedTask);
-//
-//         } catch (error) {
-//             console.error("Error creating todo list:", error);
-//             res.status(500).json({error: "Internal server error"});
-//         }
-//     });
+todosRouter.post("/task",
+    titleValidation,
+    idValidation,
+    priorityValidation,
+    textfieldValidationMidleware,
+    async(req: Request, res: Response) => {
+        const {id, title, priority = "medium"} = req.body;
+
+        try {
+            const postedTask = await todosRepository.postTask(id, title, priority)
+            if (!postedTask) {
+                res.status(404).json({error: "Todolist not found"});
+                return;
+            }
+            res.status(201).json(postedTask);
+
+        } catch (error) {
+            console.error("Error creating todo list:", error);
+            res.status(500).json({error: "Internal server error"});
+        }
+    });
 //
 // todosRouter.delete("/:id",
 //     async(req: Request, res: Response) => {

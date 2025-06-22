@@ -37,27 +37,21 @@ exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValid
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-// todosRouter.post("/task",
-//     titleValidation,
-//     idValidation,
-//     priorityValidation,
-//     textfieldValidationMidleware,
-//     async(req: Request, res: Response) => {
-//         const {id, title, priority = "medium"} = req.body;
-//
-//         try {
-//             const postedTask = await todosRepository.postTask(id, title, priority)
-//             if (!postedTask) {
-//                 res.status(404).json({error: "Todolist not found"});
-//                 return;
-//             }
-//             res.status(201).json(postedTask);
-//
-//         } catch (error) {
-//             console.error("Error creating todo list:", error);
-//             res.status(500).json({error: "Internal server error"});
-//         }
-//     });
+exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, title, priority = "medium" } = req.body;
+    try {
+        const postedTask = yield todos_repository_1.todosRepository.postTask(id, title, priority);
+        if (!postedTask) {
+            res.status(404).json({ error: "Todolist not found" });
+            return;
+        }
+        res.status(201).json(postedTask);
+    }
+    catch (error) {
+        console.error("Error creating todo list:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}));
 //
 // todosRouter.delete("/:id",
 //     async(req: Request, res: Response) => {
