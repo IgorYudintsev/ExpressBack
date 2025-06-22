@@ -1,9 +1,8 @@
-import {todosCollection} from "../index";
+import {booksCollection, todosCollection} from "../index";
 import {ObjectId} from "mongodb";
 
 export type TodoType = {
-    // todolistId:number
-    _id?: ObjectId,
+     _id?: ObjectId,
     title: string
     tasks: Array<TasksType>
 }
@@ -14,39 +13,23 @@ export type TasksType = {
     isDone: boolean
 }
 
-//  const todos:TodoType[]=[
-//     {
-//         title: "Monday",
-//         tasks: [
-//             {taskId: '1', title: "HTML&CSS", isDone: true,priority:"high"},
-//             {taskId: '2', title: "JS", isDone: false,priority:"medium"}
-//         ],
-//     },
-//     {
-//             title: "Tuesday",
-//         tasks: [
-//             {taskId: '1', title: "HTML&CSS2", isDone: false,priority:"low"},
-//             {taskId: '2', title: "JS2", isDone: true,priority:"high"}
-//         ],
-//     }
-// ]
-
-
-
 export const todosRepository={
     async getTodos():Promise<TodoType[]>{
         return await todosCollection.find().toArray();
     },
 
-    // async postTodo( title: string):Promise<ObjectType[]> {
-    //     const newTodoList:ObjectType = {
-    //         todolistId: 3,
-    //         title: title.trim(),
-    //         tasks: []
-    //     };
-    //     todos.push(newTodoList);
-    //     return todos
-    // },
+    async postTodo( title: string):Promise<TodoType> {
+        const newTodoList:TodoType = {
+            title: title.trim(),
+            tasks: []
+        };
+        const result = await todosCollection.insertOne(newTodoList);
+        const insertedTodo = await todosCollection.findOne({ _id: result.insertedId });
+        if (!insertedTodo) {
+            throw new Error("Ошибка: документ не найден после вставки");
+        }
+        return insertedTodo;
+       },
 
     // async postTask(todolistId:string, title: string,priority:"high" | "medium" | "low"):Promise<TasksType | null>  {
     //     const newTask: TasksType = {

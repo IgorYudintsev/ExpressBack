@@ -15,19 +15,19 @@ todosRouter.get("/", async(req: Request, res: Response) => {
     }
 });
 
-// todosRouter.post("/",
-//     titleValidation,
-//     textfieldValidationMidleware,
-//     async(req: Request, res: Response) => {
-//         const {title} = req.body;
-//         const postedTodos =await todosRepository.postTodo(title)
-//         if(postedTodos){
-//             res.status(201).json(postedTodos);
-//         }else{
-//             res.status(500).json({error: "Internal server error"});
-//         }
-//     });
-//
+todosRouter.post("/",
+    titleValidation,
+    textfieldValidationMidleware,
+    async(req: Request, res: Response) => {
+        const {title} = req.body;
+        const postedTodos:TodoType =await todosRepository.postTodo(title)
+        if(postedTodos){
+            res.status(201).json(postedTodos);
+        }else{
+            res.status(500).json({error: "Internal server error"});
+        }
+    });
+
 // todosRouter.post("/task",
 //     titleValidation,
 //     idValidation,

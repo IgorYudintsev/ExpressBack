@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.todosRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const todos_repository_1 = require("../repositories/todos-repository");
+const textfieldValidationMidleware_1 = require("../midlewares/textfieldValidationMidleware");
+const basicValidations_1 = require("../midlewares/basicValidations");
 exports.todosRouter = express_1.default.Router();
 exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const foundTodos = yield todos_repository_1.todosRepository.getTodos();
@@ -25,19 +27,16 @@ exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.send(foundTodos);
     }
 }));
-// todosRouter.post("/",
-//     titleValidation,
-//     textfieldValidationMidleware,
-//     async(req: Request, res: Response) => {
-//         const {title} = req.body;
-//         const postedTodos =await todosRepository.postTodo(title)
-//         if(postedTodos){
-//             res.status(201).json(postedTodos);
-//         }else{
-//             res.status(500).json({error: "Internal server error"});
-//         }
-//     });
-//
+exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title } = req.body;
+    const postedTodos = yield todos_repository_1.todosRepository.postTodo(title);
+    if (postedTodos) {
+        res.status(201).json(postedTodos);
+    }
+    else {
+        res.status(500).json({ error: "Internal server error" });
+    }
+}));
 // todosRouter.post("/task",
 //     titleValidation,
 //     idValidation,
