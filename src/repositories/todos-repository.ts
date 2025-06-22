@@ -1,5 +1,5 @@
 import {booksCollection, todosCollection} from "../index";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {v1} from "uuid";
 import {booksRepository} from "./books-repository";
 
@@ -61,20 +61,26 @@ export const todosRepository={
         return await todosCollection.find().toArray();
           },
 
-   // async deleteTask(todolistID: string, taskID: string):Promise<ObjectType[]> {
-   //      let currentTodo:ObjectType| undefined  = todos.find(el => el.todolistId === Number(todolistID));
-   //      if (!currentTodo) {
-   //          throw new Error("Todo Not Found");
-   //      }
-   //
-   //      let currentTask = currentTodo.tasks.find(el => el.taskId === Number(taskID));
-   //      if (!currentTask) {
-   //          throw new Error("Task Not Found");
-   //      }
-   //
-   //      currentTodo.tasks.splice(currentTodo.tasks.indexOf(currentTask), 1);
-   //      return todos;
-   //  },
+   async deleteTask(todolistID: string, taskID: string):Promise<TodoType[]> {
+       const todo = await todosCollection.findOne({ _id: new ObjectId(todolistID) });
+
+       if (!todo) {
+           throw new Error("❌ Todo list not found");
+       }
+
+       const taskExists = todo.tasks.some(task => task.taskId === taskID);
+       if (!taskExists) {
+           throw new Error("❌ Task not found in specified todo list");
+       }
+
+       await todosCollection.updateOne(
+           { _id: new ObjectId(todolistID) },
+           { $pull: { tasks: { taskId: taskID } } }
+       );
+
+       const allTodos = await todosCollection.find().toArray();
+       return allTodos;
+    },
 
     // async putTodo(todolistID: string,title: string):Promise<ObjectType[] | undefined>{
     //     const currentTodo:ObjectType | undefined = todos.find(el => el.todolistId === Number(todolistID));

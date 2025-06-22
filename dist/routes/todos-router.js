@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const todos_repository_1 = require("../repositories/todos-repository");
 const textfieldValidationMidleware_1 = require("../midlewares/textfieldValidationMidleware");
 const basicValidations_1 = require("../midlewares/basicValidations");
+const switchErrors_1 = require("../midlewares/switchErrors");
 exports.todosRouter = express_1.default.Router();
 exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const foundTodos = yield todos_repository_1.todosRepository.getTodos();
@@ -61,22 +62,20 @@ exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 
         res.status(404).json({ message: "Todo Not Found" });
     }
 }));
-//
-// todosRouter.delete("/:todolistID/tasks/:taskID",
-//     async (req: Request, res: Response) => {
-//     try {
-//         const {todolistID, taskID} = req.params;
-//         const result = await todosRepository.deleteTask(todolistID, taskID);
-//         res.send(result);
-//     } catch (error) {
-//         if (!(error instanceof Error)) {
-//             res.status(500).json({message: "Unknown error occurred"});
-//             return;
-//         }
-//         switchErrors(res,error.message)
-//     }
-// });
-//
+exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { todolistID, taskID } = req.params;
+        const result = yield todos_repository_1.todosRepository.deleteTask(todolistID, taskID);
+        res.send(result);
+    }
+    catch (error) {
+        if (!(error instanceof Error)) {
+            res.status(500).json({ message: "Unknown error occurred" });
+            return;
+        }
+        (0, switchErrors_1.switchErrors)(res, error.message);
+    }
+}));
 // todosRouter.put("/:id",
 //     titleValidation,
 //     async (req: Request, res: Response) => {

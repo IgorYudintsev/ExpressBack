@@ -59,22 +59,22 @@ todosRouter.delete("/:id",
         res.status(404).json({message: "Todo Not Found"});
     }
 });
-//
-// todosRouter.delete("/:todolistID/tasks/:taskID",
-//     async (req: Request, res: Response) => {
-//     try {
-//         const {todolistID, taskID} = req.params;
-//         const result = await todosRepository.deleteTask(todolistID, taskID);
-//         res.send(result);
-//     } catch (error) {
-//         if (!(error instanceof Error)) {
-//             res.status(500).json({message: "Unknown error occurred"});
-//             return;
-//         }
-//         switchErrors(res,error.message)
-//     }
-// });
-//
+
+todosRouter.delete("/:todolistID/tasks/:taskID",
+    async (req: Request, res: Response) => {
+    try {
+        const {todolistID, taskID} = req.params;
+        const result = await todosRepository.deleteTask(todolistID, taskID);
+        res.send(result);
+    } catch (error) {
+        if (!(error instanceof Error)) {
+            res.status(500).json({message: "Unknown error occurred"});
+            return;
+        }
+        switchErrors(res,error.message)
+    }
+});
+
 // todosRouter.put("/:id",
 //     titleValidation,
 //     async (req: Request, res: Response) => {
