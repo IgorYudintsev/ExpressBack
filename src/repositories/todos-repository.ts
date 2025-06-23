@@ -1,6 +1,7 @@
 import { todosCollection} from "../index";
 import {ObjectId, WithId} from "mongodb";
 import {v1} from "uuid";
+import {ensureTaskExists, ensureTodoExists} from "../midlewares/ensureItems";
 
 export type TodoType = {
      _id?: ObjectId,
@@ -33,11 +34,7 @@ export const todosRepository={
        },
 
     async postTask(todolistId:string, title: string,priority:"high" | "medium" | "low"):Promise<TasksType | null>  {
-
-        const todo = await todosCollection.findOne({ _id: new ObjectId(todolistId) });
-        if (!todo) {
-            throw new Error("❌ Todo list not found");
-        }
+        await  ensureTodoExists(todolistId)
 
         const newTask: TasksType = {
             taskId: v1(),
@@ -61,22 +58,13 @@ export const todosRepository={
     async deleteTodo( id: string):Promise<TodoType[] | undefined> {
         const result = await todosCollection.deleteOne({ _id: new ObjectId(id) });
         if (result.deletedCount === 0) {
-            throw new Error("Тудулист с таким _id не найдена");
+            throw new Error("Todo Not Found");
         }
         return await todosCollection.find().toArray();
           },
 
    async deleteTask(todolistID: string, taskID: string):Promise<TodoType[]> {
-
-       const todo = await todosCollection.findOne({ _id: new ObjectId(todolistID) });
-       if (!todo) {
-           throw new Error("❌ Todo list not found");
-       }
-
-       const taskExists = todo.tasks.some(task => task.taskId === taskID);
-       if (!taskExists) {
-           throw new Error("❌ Task not found in specified todo list");
-       }
+       await ensureTaskExists(todolistID, taskID);
 
        await todosCollection.updateOne(
            { _id: new ObjectId(todolistID) },
@@ -94,24 +82,15 @@ export const todosRepository={
         );
 
         if (result.matchedCount === 0) {
-            throw new Error("❌ Todo list not found");
+            throw new Error("Task Not Found");
         }
         return await todosCollection.find().toArray();
     },
 
  async  putTask(todolistID: string, taskID: string, title: string) {
-     const todo = await todosCollection.findOne({ _id: new ObjectId(todolistID) });
+        await ensureTaskExists(todolistID, taskID);
 
-     if (!todo) {
-         throw new Error("❌ Todo list not found");
-     }
-
-     const taskExists = todo.tasks.some(task => task.taskId === taskID);
-     if (!taskExists) {
-         throw new Error("❌ Task not found in specified todo list");
-     }
-
-     const trimmedTitle = title.trim();
+        const trimmedTitle = title.trim();
 
     await todosCollection.updateOne(
          { _id: new ObjectId(todolistID), "tasks.taskId": taskID },

@@ -105,6 +105,7 @@ todosRouter.put("/:todolistID/tasks/:taskID",
         } catch (error) {
             if (error instanceof Error) {
                 switchErrors(res,error.message)
+                return
             } else {
                 console.error("Unknown error updating task:", error);
                 res.status(500).json({error: "Internal server error"});

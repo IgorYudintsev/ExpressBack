@@ -101,6 +101,7 @@ exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleVa
     catch (error) {
         if (error instanceof Error) {
             (0, switchErrors_1.switchErrors)(res, error.message);
+            return;
         }
         else {
             console.error("Unknown error updating task:", error);
