@@ -10,18 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksRepository = void 0;
-// import {currentCollection} from "../index";
 const mongodb_1 = require("mongodb");
 const index_1 = require("../index");
 exports.booksRepository = {
-    getBooks() {
+    getBooksMongoDB() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield index_1.booksCollection.find().toArray();
         });
     },
-    postBooks(volume) {
+    postBooksMongoDB(newBook) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newBook = { volume };
             const result = yield index_1.booksCollection.insertOne(newBook);
             const insertedBook = yield index_1.booksCollection.findOne({ _id: result.insertedId });
             if (!insertedBook) {
@@ -30,7 +28,7 @@ exports.booksRepository = {
             return insertedBook;
         });
     },
-    deleteBooks(id) {
+    deleteBooksMongoDB(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield index_1.booksCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
             if (result.deletedCount === 0) {

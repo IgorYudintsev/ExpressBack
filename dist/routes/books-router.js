@@ -14,11 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const books_repository_1 = require("../repositories/books-repository");
 const express_validator_1 = require("express-validator");
+const books_service_1 = require("../domain/books-service");
 exports.booksRouter = express_1.default.Router();
 exports.booksRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const foundBooks = yield books_repository_1.booksRepository.getBooks();
+    const foundBooks = yield books_service_1.booksService.getBooks();
     res.send(foundBooks);
 }));
 exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({ min: 3, max: 30 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,11 +27,11 @@ exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({
         res.status(400).json({ error: "Invalid volume: min:1, max:30" });
     }
     const { volume } = req.body;
-    const newBook = yield books_repository_1.booksRepository.postBooks(volume);
+    const newBook = yield books_service_1.booksService.postBooks(volume);
     res.status(201).json(newBook);
 }));
 exports.booksRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let currentBook = yield books_repository_1.booksRepository.deleteBooks(req.params.id);
+    let currentBook = yield books_service_1.booksService.deleteBooks(req.params.id);
     if (currentBook) {
         res.send(currentBook);
     }

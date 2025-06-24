@@ -1,12 +1,13 @@
 import express, {Request, Response} from "express";
-import {booksRepository, BookType} from "../repositories/books-repository";
+import { BookType} from "../repositories/books-repository";
 import { body, validationResult } from 'express-validator';
+import {booksService} from "../domain/books-service";
 
 export const booksRouter = express.Router();
 
 
 booksRouter.get("/", async (req: Request, res: Response) => {
-  const  foundBooks:BookType[]= await booksRepository.getBooks()
+  const  foundBooks:BookType[]= await booksService.getBooks()
     res.send(foundBooks);
 });
 
@@ -21,13 +22,13 @@ booksRouter.post("/",
         }
 
         const { volume} = req.body as {  volume: string };
-        const newBook: BookType=await booksRepository.postBooks(volume)
+        const newBook: BookType=await booksService.postBooks(volume)
         res.status(201).json(newBook);
     });
 
 
 booksRouter.delete("/:id", async(req: Request, res: Response) => {
-    let currentBook =await booksRepository.deleteBooks(req.params.id)
+    let currentBook =await booksService.deleteBooks(req.params.id)
     if (currentBook) {
         res.send(currentBook);
     } else {
