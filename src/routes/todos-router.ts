@@ -3,11 +3,12 @@ import {todosRepository, TodoType} from "../repositories/todos-repository";
 import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
 import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
 import {switchErrors} from "../midlewares/switchErrors";
+import {todosService} from "../domain/todos-service";
 export const todosRouter = express.Router();
 
 
 todosRouter.get("/", async(req: Request, res: Response) => {
-    const foundTodos:TodoType[] = await todosRepository.getTodos()
+    const foundTodos:TodoType[] = await todosService.getTodos()
     if (!foundTodos || foundTodos.length === 0) {
         res.status(404).send("No todos found");
     } else {
@@ -20,7 +21,7 @@ todosRouter.post("/",
     textfieldValidationMidleware,
     async(req: Request, res: Response) => {
         const {title} = req.body;
-        const postedTodos:TodoType =await todosRepository.postTodo(title)
+        const postedTodos:TodoType =await todosService.postTodo(title)
         if(postedTodos){
             res.status(201).json(postedTodos);
         }else{
@@ -37,7 +38,7 @@ todosRouter.post("/task",
         const {id, title, priority = "medium"} = req.body;
 
         try {
-            const postedTask = await todosRepository.postTask(id, title, priority)
+            const postedTask = await todosService.postTask(id, title, priority)
             if (!postedTask) {
                 res.status(404).json({error: "Todolist not found"});
                 return;
@@ -52,7 +53,7 @@ todosRouter.post("/task",
 
 todosRouter.delete("/:id",
     async(req: Request, res: Response) => {
-    const todosAfterRemove =await todosRepository.deleteTodo(req.params.id)
+    const todosAfterRemove =await todosService.deleteTodo(req.params.id)
     if (todosAfterRemove) {
         res.send(todosAfterRemove);
     } else {
@@ -64,7 +65,7 @@ todosRouter.delete("/:todolistID/tasks/:taskID",
     async (req: Request, res: Response) => {
     try {
         const {todolistID, taskID} = req.params;
-        const result = await todosRepository.deleteTask(todolistID, taskID);
+        const result = await todosService.deleteTask(todolistID, taskID);
         res.send(result);
     } catch (error) {
         if (!(error instanceof Error)) {
@@ -80,7 +81,7 @@ todosRouter.put("/:id",
     async (req: Request, res: Response) => {
         try {
             const {title} = req.body;
-            const updatedTodo = await todosRepository.putTodo(req.params.id, title)
+            const updatedTodo = await todosService.putTodo(req.params.id, title)
             if (updatedTodo) {
                 res.status(200).json(updatedTodo);
             } else {
@@ -99,7 +100,7 @@ todosRouter.put("/:todolistID/tasks/:taskID",
             const {todolistID, taskID} = req.params;
             const {title} = req.body;
 
-            const updatedTodos =await todosRepository.putTask(todolistID, taskID, title);
+            const updatedTodos =await todosService.putTask(todolistID, taskID, title);
             res.status(200).json(updatedTodos);
 
         } catch (error) {

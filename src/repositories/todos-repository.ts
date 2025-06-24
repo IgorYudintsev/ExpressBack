@@ -16,15 +16,11 @@ export type TasksType = {
 }
 
 export const todosRepository={
-    async getTodos():Promise<TodoType[]>{
+    async getTodosMongoDB():Promise<TodoType[]>{
         return await todosCollection.find().toArray();
     },
 
-    async postTodo( title: string):Promise<TodoType> {
-        const newTodoList:TodoType = {
-            title: title.trim(),
-            tasks: []
-        };
+    async postTodoMongoDB( newTodoList:TodoType):Promise<TodoType> {
         const result = await todosCollection.insertOne(newTodoList);
         const insertedTodo = await todosCollection.findOne({ _id: result.insertedId });
         if (!insertedTodo) {
@@ -33,16 +29,8 @@ export const todosRepository={
         return insertedTodo;
        },
 
-    async postTask(todolistId:string, title: string,priority:"high" | "medium" | "low"):Promise<TasksType | null>  {
+    async postTaskMongoDB(todolistId:string,newTask: TasksType):Promise<TasksType | null>  {
         await  ensureTodoExists(todolistId)
-
-        const newTask: TasksType = {
-            taskId: v1(),
-            title: title.trim(),
-            isDone: false,
-            priority: priority as "high" | "medium" | "low"
-        };
-
         const updateResult = await todosCollection.updateOne(
             { _id: new ObjectId(todolistId) },
             { $push: { tasks: newTask } }
@@ -55,15 +43,15 @@ export const todosRepository={
         }
     },
 
-    async deleteTodo( id: string):Promise<TodoType[] | undefined> {
+    async deleteTodoMongoDB( id: string):Promise<TodoType[] | undefined> {
         const result = await todosCollection.deleteOne({ _id: new ObjectId(id) });
         if (result.deletedCount === 0) {
             throw new Error("Todo Not Found");
         }
         return await todosCollection.find().toArray();
-          },
+        },
 
-   async deleteTask(todolistID: string, taskID: string):Promise<TodoType[]> {
+   async deleteTaskMongoDB(todolistID: string, taskID: string):Promise<TodoType[]> {
        await ensureTaskExists(todolistID, taskID);
 
        await todosCollection.updateOne(
@@ -73,9 +61,7 @@ export const todosRepository={
        return await todosCollection.find().toArray();
     },
 
-    async putTodo(todolistID: string,title: string):Promise<TodoType[] | undefined>{
-        const trimmedTitle = title.trim();
-
+    async putTodoMongoDB(todolistID: string,trimmedTitle: string):Promise<TodoType[] | undefined>{
         const result = await todosCollection.updateOne(
             { _id: new ObjectId(todolistID) },
             { $set: { title: trimmedTitle } }
@@ -87,10 +73,8 @@ export const todosRepository={
         return await todosCollection.find().toArray();
     },
 
- async  putTask(todolistID: string, taskID: string, title: string) {
+ async  putTaskMongoDB(todolistID: string, taskID: string, trimmedTitle: string) {
         await ensureTaskExists(todolistID, taskID);
-
-        const trimmedTitle = title.trim();
 
     await todosCollection.updateOne(
          { _id: new ObjectId(todolistID), "tasks.taskId": taskID },

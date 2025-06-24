@@ -1,5 +1,3 @@
-import {ObjectId} from "mongodb";
-import {booksCollection} from "../index";
 import {booksRepository, BookType} from "../repositories/books-repository";
 
 

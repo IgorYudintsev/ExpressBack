@@ -14,13 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.todosRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const todos_repository_1 = require("../repositories/todos-repository");
 const textfieldValidationMidleware_1 = require("../midlewares/textfieldValidationMidleware");
 const basicValidations_1 = require("../midlewares/basicValidations");
 const switchErrors_1 = require("../midlewares/switchErrors");
+const todos_service_1 = require("../domain/todos-service");
 exports.todosRouter = express_1.default.Router();
 exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const foundTodos = yield todos_repository_1.todosRepository.getTodos();
+    const foundTodos = yield todos_service_1.todosService.getTodos();
     if (!foundTodos || foundTodos.length === 0) {
         res.status(404).send("No todos found");
     }
@@ -30,7 +30,7 @@ exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.body;
-    const postedTodos = yield todos_repository_1.todosRepository.postTodo(title);
+    const postedTodos = yield todos_service_1.todosService.postTodo(title);
     if (postedTodos) {
         res.status(201).json(postedTodos);
     }
@@ -41,7 +41,7 @@ exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValid
 exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, title, priority = "medium" } = req.body;
     try {
-        const postedTask = yield todos_repository_1.todosRepository.postTask(id, title, priority);
+        const postedTask = yield todos_service_1.todosService.postTask(id, title, priority);
         if (!postedTask) {
             res.status(404).json({ error: "Todolist not found" });
             return;
@@ -54,7 +54,7 @@ exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValid
     }
 }));
 exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const todosAfterRemove = yield todos_repository_1.todosRepository.deleteTodo(req.params.id);
+    const todosAfterRemove = yield todos_service_1.todosService.deleteTodo(req.params.id);
     if (todosAfterRemove) {
         res.send(todosAfterRemove);
     }
@@ -65,7 +65,7 @@ exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 
 exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { todolistID, taskID } = req.params;
-        const result = yield todos_repository_1.todosRepository.deleteTask(todolistID, taskID);
+        const result = yield todos_service_1.todosService.deleteTask(todolistID, taskID);
         res.send(result);
     }
     catch (error) {
@@ -79,7 +79,7 @@ exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter
 exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { title } = req.body;
-        const updatedTodo = yield todos_repository_1.todosRepository.putTodo(req.params.id, title);
+        const updatedTodo = yield todos_service_1.todosService.putTodo(req.params.id, title);
         if (updatedTodo) {
             res.status(200).json(updatedTodo);
         }
@@ -95,7 +95,7 @@ exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleVa
     try {
         const { todolistID, taskID } = req.params;
         const { title } = req.body;
-        const updatedTodos = yield todos_repository_1.todosRepository.putTask(todolistID, taskID, title);
+        const updatedTodos = yield todos_service_1.todosService.putTask(todolistID, taskID, title);
         res.status(200).json(updatedTodos);
     }
     catch (error) {
