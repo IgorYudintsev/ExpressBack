@@ -3,8 +3,8 @@ import {booksRepository, BookType} from "../repositories/books-repository";
 
 
 export const booksService={
-    async  getBooks():Promise<BookType[]> {
-        return  booksRepository.getBooksMongoDB()
+    async  getBooks(order: 'asc' | 'desc' = 'asc'):Promise<BookType[]> {
+        return  booksRepository.getBooksMongoDB(order)
     },
 
     async postBooks( volume: string):Promise<BookType>  {

@@ -7,7 +7,8 @@ export const booksRouter = express.Router();
 
 
 booksRouter.get("/", async (req: Request, res: Response) => {
-  const  foundBooks:BookType[]= await booksService.getBooks()
+    const order = req.query.order === 'desc' ? 'desc' : 'asc'; // безопасная обработка
+   const  foundBooks:BookType[]= await booksService.getBooks(order)
     res.send(foundBooks);
 });
 

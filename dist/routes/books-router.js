@@ -18,7 +18,8 @@ const express_validator_1 = require("express-validator");
 const books_service_1 = require("../domain/books-service");
 exports.booksRouter = express_1.default.Router();
 exports.booksRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const foundBooks = yield books_service_1.booksService.getBooks();
+    const order = req.query.order === 'desc' ? 'desc' : 'asc'; // безопасная обработка
+    const foundBooks = yield books_service_1.booksService.getBooks(order);
     res.send(foundBooks);
 }));
 exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({ min: 3, max: 30 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
