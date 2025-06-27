@@ -12,7 +12,7 @@ export const booksService={
         return booksRepository.postBooksMongoDB(newBook)
     },
 
-    async deleteBooks( id: string):Promise<BookType[] |undefined>  {
+    async deleteBooks( id: string):Promise<{deleted: true| false}>  {
         return booksRepository.deleteBooksMongoDB(id)
     }
 }

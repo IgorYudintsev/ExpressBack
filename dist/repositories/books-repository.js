@@ -61,10 +61,7 @@ exports.booksRepository = {
     deleteBooksMongoDB(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield index_1.booksCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
-            if (result.deletedCount === 0) {
-                throw new Error("Книга с таким _id не найдена");
-            }
-            return yield index_1.booksCollection.find().toArray();
+            return { deleted: result.deletedCount === 1 };
         });
     }
 };

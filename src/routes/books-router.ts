@@ -31,14 +31,23 @@ booksRouter.post("/",
     });
 
 
-booksRouter.delete("/:id", async(req: Request, res: Response) => {
-    let currentBook =await booksService.deleteBooks(req.params.id)
-    if (currentBook) {
-        res.send(currentBook);
+// booksRouter.delete("/:id", async(req: Request, res: Response) => {
+//     let currentBook =await booksService.deleteBooks(req.params.id)
+//     if (currentBook) {
+//         res.send(currentBook);
+//     } else {
+//         res.status(404).json({message: "Book Not Found"});
+//     }
+// });
+
+booksRouter.delete("/:id", async (req: Request, res: Response) => {
+    const { deleted } = await booksService.deleteBooks(req.params.id);
+
+    if (deleted) {
+        res.status(200).json({ deleted: true });
     } else {
-        res.status(404).json({message: "Book Not Found"});
+        res.status(404).json({ message: "Книга не найдена" });
     }
 });
-
 
 

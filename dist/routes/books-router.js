@@ -33,12 +33,20 @@ exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({
     const newBook = yield books_service_1.booksService.postBooks(volume);
     res.status(201).json(newBook);
 }));
+// booksRouter.delete("/:id", async(req: Request, res: Response) => {
+//     let currentBook =await booksService.deleteBooks(req.params.id)
+//     if (currentBook) {
+//         res.send(currentBook);
+//     } else {
+//         res.status(404).json({message: "Book Not Found"});
+//     }
+// });
 exports.booksRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let currentBook = yield books_service_1.booksService.deleteBooks(req.params.id);
-    if (currentBook) {
-        res.send(currentBook);
+    const { deleted } = yield books_service_1.booksService.deleteBooks(req.params.id);
+    if (deleted) {
+        res.status(200).json({ deleted: true });
     }
     else {
-        res.status(404).json({ message: "Book Not Found" });
+        res.status(404).json({ message: "Книга не найдена" });
     }
 }));
