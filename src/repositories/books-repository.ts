@@ -1,63 +1,65 @@
 import {ObjectId} from "mongodb";
 import {booksCollection} from "../index";
+import {getPagination, getPaginationInfo} from "../utils/paginator";
+
+export type PaginationResult<T> = {
+    items: T[];
+    pagination: {
+        page: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
+        hasPrevPage: boolean;
+        hasNextPage: boolean;
+    };
+};
 
 export type BookType={
     _id?: ObjectId,
     volume: string
 }
 
+
 export const booksRepository={
 
-    // async  getBooksMongoDB():Promise<BookType[]> {
-    //           return await  booksCollection.find().toArray();
-    // },
+    async getBooksMongoDB(
+        order: 'asc' | 'desc' = 'asc',
+        page = 1,
+        pageSize = 10
+    ): Promise<{ items: BookType[]; pagination: ReturnType<typeof getPaginationInfo> }> {
+        const sortDirection = order === 'asc' ? 1 : -1;
+        const { skip, limit } = getPagination({ page, pageSize });
 
-
-    //   async  getBooksMongoDB(order: 'asc' | 'desc' = 'asc'):Promise<BookType[]> {
-    //       const books = await booksCollection.find().toArray();
-    //       const sorted = books.sort((a, b) => {
-    //           const getNumber = (v: string) => parseInt(v.replace(/[^\d]/g, '')) || 0;
-    //           return order === 'asc'
-    //               ? getNumber(a.volume) - getNumber(b.volume)
-    //               : getNumber(b.volume) - getNumber(a.volume);
-    //       });
-    //       return sorted;
-    // },
-
-        async getBooksMongoDB(order: 'asc' | 'desc' = 'asc'): Promise<BookType[]> {
-            const sortDirection = order === 'asc' ? 1 : -1;
-
-            //Создаём новое поле volumeNumber, делим строку "Book-11" на массив ["Book", "11"]
-            const pipeline = [
-                {
-                    $addFields: {
-                        volumeNumber: {
-                            $toInt: {
-                                $arrayElemAt: [
-                                    { $split: ["$volume", "-"] },
-                                    1
-                                ]
-                            }
-                        }
-                    }
-                },
-
-                // Сортируем документы по новому числовому полю volumeNumber в нужном порядке (asc или desc).
-                {
-                    $sort: { volumeNumber: sortDirection }
-                },
-                // Очищаем финальный результат, удаляя volumeNumber, так как оно использовалось только для сортировки.
-                {
-                    $project: {
-                        _id: 1,
-                        volume: 1
+        const pipeline = [
+            {
+                $addFields: {
+                    volumeNumber: {
+                        $toInt: { $arrayElemAt: [{ $split: ["$volume", "-"] }, 1] }
                     }
                 }
-            ];
+            },
+            { $sort: { volumeNumber: sortDirection } },
+            {
+                $facet: {
+                    items: [
+                        { $skip: skip },
+                        { $limit: limit },
+                        { $project: { _id: 1, volume: 1 } }
+                    ],
+                    totalCount: [
+                        { $count: "count" }
+                    ]
+                }
+            }
+        ];
 
-            // 👇 Приводим результат к типу BookType[]
-            return await booksCollection.aggregate(pipeline).toArray() as BookType[];
-        },
+        const result = await booksCollection.aggregate(pipeline).toArray();
+        const items = result[0]?.items ?? [];
+        const totalItems = result[0]?.totalCount[0]?.count ?? 0;
+        const pagination = getPaginationInfo(totalItems, page, pageSize);
+
+        return { items, pagination };
+    },
 
     async postBooksMongoDB(newBook:BookType):Promise<BookType>  {
           const result = await booksCollection.insertOne(newBook);

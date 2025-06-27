@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import { BookType} from "../repositories/books-repository";
+import {BookType, PaginationResult} from "../repositories/books-repository";
 import { body, validationResult } from 'express-validator';
 import {booksService} from "../domain/books-service";
 
@@ -7,8 +7,11 @@ export const booksRouter = express.Router();
 
 
 booksRouter.get("/", async (req: Request, res: Response) => {
-    const order = req.query.order === 'desc' ? 'desc' : 'asc'; // безопасная обработка
-   const  foundBooks:BookType[]= await booksService.getBooks(order)
+    const order = req.query.order === 'desc' ? 'desc' : 'asc';
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+   const  foundBooks:PaginationResult<BookType>= await booksService.getBooks(order,page,pageSize)
     res.send(foundBooks);
 });
 

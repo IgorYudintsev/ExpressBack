@@ -1,10 +1,10 @@
-import {booksRepository, BookType} from "../repositories/books-repository";
+import {booksRepository, BookType, PaginationResult} from "../repositories/books-repository";
 
 
 
 export const booksService={
-    async  getBooks(order: 'asc' | 'desc' = 'asc'):Promise<BookType[]> {
-        return  booksRepository.getBooksMongoDB(order)
+    async  getBooks(order: 'asc' | 'desc' = 'asc',page: number, pageSize: number):Promise<PaginationResult<BookType>> {
+        return  booksRepository.getBooksMongoDB(order,page,pageSize)
     },
 
     async postBooks( volume: string):Promise<BookType>  {
