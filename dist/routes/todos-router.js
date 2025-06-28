@@ -20,8 +20,10 @@ const switchErrors_1 = require("../midlewares/switchErrors");
 const todos_service_1 = require("../domain/todos-service");
 exports.todosRouter = express_1.default.Router();
 exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const foundTodos = yield todos_service_1.todosService.getTodos();
-    if (!foundTodos || foundTodos.length === 0) {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
+    const foundTodos = yield todos_service_1.todosService.getTodos(page, pageSize);
+    if (!foundTodos.items || foundTodos.items.length === 0) {
         res.status(404).send("No todos found");
     }
     else {

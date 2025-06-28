@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {todosRepository, TodoType} from "../repositories/todos-repository";
+import {PaginationResult, todosRepository, TodoType} from "../repositories/todos-repository";
 import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
 import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
 import {switchErrors} from "../midlewares/switchErrors";
@@ -8,8 +8,11 @@ export const todosRouter = express.Router();
 
 
 todosRouter.get("/", async(req: Request, res: Response) => {
-    const foundTodos:TodoType[] = await todosService.getTodos()
-    if (!foundTodos || foundTodos.length === 0) {
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+
+    const foundTodos:PaginationResult<TodoType> = await todosService.getTodos(page,pageSize)
+    if (!foundTodos.items || foundTodos.items.length === 0) {
         res.status(404).send("No todos found");
     } else {
         res.send(foundTodos);

@@ -1,7 +1,21 @@
-import { todosCollection} from "../index";
+import {booksCollection, todosCollection} from "../index";
 import {ObjectId, WithId} from "mongodb";
 import {v1} from "uuid";
 import {ensureTaskExists, ensureTodoExists} from "../midlewares/ensureItems";
+import {getPagination, getPaginationInfo} from "../utils/paginator";
+
+
+export type PaginationResult<T> = {
+    items: T[];
+    pagination: {
+        page: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
+        hasPrevPage: boolean;
+        hasNextPage: boolean;
+    };
+};
 
 export type TodoType = {
      _id?: ObjectId,
@@ -16,8 +30,29 @@ export type TasksType = {
 }
 
 export const todosRepository={
-    async getTodosMongoDB():Promise<TodoType[]>{
-        return await todosCollection.find().toArray();
+    async getTodosMongoDB( page = 1, pageSize = 10):Promise<{ items: TodoType[]; pagination: ReturnType<typeof getPaginationInfo> }>{
+        const { skip, limit } = getPagination({ page, pageSize });
+
+        const pipeline = [
+            {
+                $facet: {
+                    items: [
+                        { $skip: skip },
+                        { $limit: limit },
+                        { $project: { _id: 1, title: 1, tasks: 1 } }
+                    ],
+                    totalCount: [
+                        { $count: "count" }
+                    ]
+                }
+            }
+        ];
+        const result = await todosCollection.aggregate(pipeline).toArray();
+        const items = result[0]?.items ?? [];
+        const totalItems = result[0]?.totalCount[0]?.count ?? 0;
+        const pagination = getPaginationInfo(totalItems, page, pageSize);
+
+        return { items, pagination };
     },
 
     async postTodoMongoDB( newTodoList:TodoType):Promise<TodoType> {

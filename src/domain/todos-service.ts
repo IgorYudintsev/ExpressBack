@@ -1,14 +1,14 @@
 import { todosCollection} from "../index";
 import {ObjectId,} from "mongodb";
 import {v1} from "uuid";
-import {TasksType, todosRepository, TodoType} from "../repositories/todos-repository";
-import {ensureTaskExists, ensureTodoExists} from "../midlewares/ensureItems";
+import {PaginationResult, TasksType, todosRepository, TodoType} from "../repositories/todos-repository";
+
 
 
 
 export const todosService={
-    async getTodos():Promise<TodoType[]>{
-        return todosRepository.getTodosMongoDB()
+    async getTodos(page: number, pageSize: number):Promise<PaginationResult<TodoType>>{
+        return todosRepository.getTodosMongoDB(page,pageSize)
     },
 
     async postTodo( title: string):Promise<TodoType> {
