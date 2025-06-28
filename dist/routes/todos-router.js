@@ -56,9 +56,9 @@ exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValid
     }
 }));
 exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const todosAfterRemove = yield todos_service_1.todosService.deleteTodo(req.params.id);
-    if (todosAfterRemove) {
-        res.send(todosAfterRemove);
+    const { deleted } = yield todos_service_1.todosService.deleteTodo(req.params.id);
+    if (deleted) {
+        res.send({ deleted: true });
     }
     else {
         res.status(404).json({ message: "Todo Not Found" });
@@ -67,8 +67,8 @@ exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 
 exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { todolistID, taskID } = req.params;
-        const result = yield todos_service_1.todosService.deleteTask(todolistID, taskID);
-        res.send(result);
+        const { deleted } = yield todos_service_1.todosService.deleteTask(todolistID, taskID);
+        res.send(deleted);
     }
     catch (error) {
         if (!(error instanceof Error)) {
@@ -97,8 +97,8 @@ exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleVa
     try {
         const { todolistID, taskID } = req.params;
         const { title } = req.body;
-        const updatedTodos = yield todos_service_1.todosService.putTask(todolistID, taskID, title);
-        res.status(200).json(updatedTodos);
+        const updatedTodo = yield todos_service_1.todosService.putTask(todolistID, taskID, title);
+        res.status(200).json(updatedTodo);
     }
     catch (error) {
         if (error instanceof Error) {

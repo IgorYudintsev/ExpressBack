@@ -78,34 +78,32 @@ export const todosRepository={
         }
     },
 
-    async deleteTodoMongoDB( id: string):Promise<TodoType[] | undefined> {
+    async deleteTodoMongoDB( id: string):Promise<{ deleted: boolean }> {
         const result = await todosCollection.deleteOne({ _id: new ObjectId(id) });
-        if (result.deletedCount === 0) {
-            throw new Error("Todo Not Found");
-        }
-        return await todosCollection.find().toArray();
+        return { deleted: result.deletedCount === 1 };
         },
 
-   async deleteTaskMongoDB(todolistID: string, taskID: string):Promise<TodoType[]> {
+   async deleteTaskMongoDB(todolistID: string, taskID: string):Promise<{ deleted: boolean }> {
        await ensureTaskExists(todolistID, taskID);
 
-       await todosCollection.updateOne(
+       const result =  await todosCollection.updateOne(
            { _id: new ObjectId(todolistID) },
            { $pull: { tasks: { taskId: taskID } } }
        );
-       return await todosCollection.find().toArray();
+       return { deleted: result.modifiedCount  === 1 };
     },
 
-    async putTodoMongoDB(todolistID: string,trimmedTitle: string):Promise<TodoType[] | undefined>{
+    async putTodoMongoDB(todolistID: string,trimmedTitle: string):Promise<TodoType | undefined>{
         const result = await todosCollection.updateOne(
             { _id: new ObjectId(todolistID) },
             { $set: { title: trimmedTitle } }
         );
 
         if (result.matchedCount === 0) {
-            throw new Error("Task Not Found");
-        }
-        return await todosCollection.find().toArray();
+            return undefined // Иначе будет попадать в 500
+         }
+      const found= await todosCollection.findOne({ _id: new ObjectId(todolistID) });
+        return found || undefined;
     },
 
  async  putTaskMongoDB(todolistID: string, taskID: string, trimmedTitle: string) {
@@ -119,7 +117,7 @@ export const todosRepository={
              }
          }
      );
-
-     return await todosCollection.find().toArray();
+     const found= await todosCollection.findOne({ _id: new ObjectId(todolistID) });
+     return found || undefined;
     }
 }

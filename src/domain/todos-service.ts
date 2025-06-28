@@ -29,20 +29,20 @@ export const todosService={
         return todosRepository.postTaskMongoDB(todolistId,newTask)
      },
 
-    async deleteTodo( id: string):Promise<TodoType[] | undefined> {
+    async deleteTodo( id: string):Promise<{deleted: true| false}> {
         return todosRepository.deleteTodoMongoDB(id)
     },
 
-    async deleteTask(todolistID: string, taskID: string):Promise<TodoType[]> {
+    async deleteTask(todolistID: string, taskID: string):Promise<{deleted: true| false}> {
         return todosRepository.deleteTaskMongoDB(todolistID,taskID)
     },
 
-    async putTodo(todolistID: string,title: string):Promise<TodoType[] | undefined>{
+    async putTodo(todolistID: string,title: string):Promise<TodoType| undefined>{
         const trimmedTitle = title.trim();
         return todosRepository.putTodoMongoDB(todolistID,trimmedTitle)
          },
 
-    async  putTask(todolistID: string, taskID: string, title: string) {
+    async  putTask(todolistID: string, taskID: string, title: string):Promise<TodoType| undefined> {
          const trimmedTitle = title.trim();
         return todosRepository.putTaskMongoDB(todolistID,taskID,trimmedTitle)
     }

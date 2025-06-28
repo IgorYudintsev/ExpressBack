@@ -56,9 +56,9 @@ todosRouter.post("/task",
 
 todosRouter.delete("/:id",
     async(req: Request, res: Response) => {
-    const todosAfterRemove =await todosService.deleteTodo(req.params.id)
-    if (todosAfterRemove) {
-        res.send(todosAfterRemove);
+    const { deleted } =await todosService.deleteTodo(req.params.id)
+    if (deleted) {
+        res.send({ deleted: true });
     } else {
         res.status(404).json({message: "Todo Not Found"});
     }
@@ -68,8 +68,8 @@ todosRouter.delete("/:todolistID/tasks/:taskID",
     async (req: Request, res: Response) => {
     try {
         const {todolistID, taskID} = req.params;
-        const result = await todosService.deleteTask(todolistID, taskID);
-        res.send(result);
+        const { deleted } =await todosService.deleteTask(todolistID, taskID)
+        res.send(deleted);
     } catch (error) {
         if (!(error instanceof Error)) {
             res.status(500).json({message: "Unknown error occurred"});
@@ -82,9 +82,9 @@ todosRouter.delete("/:todolistID/tasks/:taskID",
 todosRouter.put("/:id",
     titleValidation,
     async (req: Request, res: Response) => {
-        try {
+            try {
             const {title} = req.body;
-            const updatedTodo = await todosService.putTodo(req.params.id, title)
+            const updatedTodo:TodoType | undefined  = await todosService.putTodo(req.params.id, title)
             if (updatedTodo) {
                 res.status(200).json(updatedTodo);
             } else {
@@ -95,6 +95,9 @@ todosRouter.put("/:id",
         }
     });
 
+
+
+
 todosRouter.put("/:todolistID/tasks/:taskID",
     titleValidation,
     textfieldValidationMidleware,
@@ -103,8 +106,8 @@ todosRouter.put("/:todolistID/tasks/:taskID",
             const {todolistID, taskID} = req.params;
             const {title} = req.body;
 
-            const updatedTodos =await todosService.putTask(todolistID, taskID, title);
-            res.status(200).json(updatedTodos);
+            const updatedTodo:TodoType | undefined  =await todosService.putTask(todolistID, taskID, title);
+            res.status(200).json(updatedTodo);
 
         } catch (error) {
             if (error instanceof Error) {
