@@ -12,14 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.todosCollection = exports.booksCollection = void 0;
+exports.usersCollection = exports.todosCollection = exports.booksCollection = void 0;
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const port = 3000;
 const cors_1 = __importDefault(require("cors"));
 const books_router_1 = require("./routes/books-router");
 const todos_router_1 = require("./routes/todos-router");
-const mongoDB_1 = require("./db/mongoDB"); // если ты завёл отдельный репозиторий
+const auth_router_1 = require("./routes/auth-router");
+const mongoDB_1 = require("./db/mongoDB");
 app.use(express_1.default.json()); // Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use((0, cors_1.default)()); // Включаем CORS, чтобы разрешить запросы с других доменов
 app.get("/", (req, res) => {
@@ -27,12 +28,13 @@ app.get("/", (req, res) => {
 });
 app.use('/books', books_router_1.booksRouter);
 app.use('/todos', todos_router_1.todosRouter);
+app.use('/auth', auth_router_1.authRouter);
 const currentDB = mongoDB_1.client.db('kiberRus');
 exports.booksCollection = currentDB.collection('books');
 exports.todosCollection = currentDB.collection('todos');
+exports.usersCollection = currentDB.collection('Users');
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, mongoDB_1.connectToDb)('books');
-    yield (0, mongoDB_1.connectToDb)('todos');
+    yield (0, mongoDB_1.connectToDb)(); // Просто один вызов
     app.listen(port, () => {
         console.log(`Example app listening on port: ${port}`);
     });

@@ -11,14 +11,16 @@ if (!mongoURI) {
 
 export const client = new MongoClient(mongoURI);
 
-export async function connectToDb(dbName: string) {
+export async function connectToDb() {
     try {
         await client.connect();
-        await client.db(dbName).command({ ping: 1 });
-        console.log(`✅ Connected successfully to MongoDB database: ${dbName}`);
+        await client.db().command({ ping: 1 });
+        console.log(`✅ Connected successfully to MongoDB`);
     } catch (error) {
-        console.error(`❌ Connection to ${dbName} failed:`, error);
+        console.error(`❌ Connection failed:`, error);
         await client.close();
         process.exit(1);
     }
 }
+
+
