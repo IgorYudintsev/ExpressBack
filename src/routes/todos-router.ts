@@ -1,6 +1,6 @@
 import express, {Request, Response} from "express";
 import {PaginationResult, todosRepository, TodoType} from "../repositories/todos-repository";
-import {textfieldValidationMidleware} from "../midlewares/textfieldValidationMidleware";
+import {validationMidleware} from "../midlewares/validationMidleware";
 import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
 import {switchErrors} from "../midlewares/switchErrors";
 import {todosService} from "../domain/todos-service";
@@ -21,7 +21,7 @@ todosRouter.get("/", async(req: Request, res: Response) => {
 
 todosRouter.post("/",
     titleValidation,
-    textfieldValidationMidleware,
+    validationMidleware,
     async(req: Request, res: Response) => {
         const {title} = req.body;
         const postedTodos:TodoType =await todosService.postTodo(title)
@@ -36,7 +36,7 @@ todosRouter.post("/task",
     titleValidation,
     idValidation,
     priorityValidation,
-    textfieldValidationMidleware,
+    validationMidleware,
     async(req: Request, res: Response) => {
         const {id, title, priority = "medium"} = req.body;
 
@@ -100,7 +100,7 @@ todosRouter.put("/:id",
 
 todosRouter.put("/:todolistID/tasks/:taskID",
     titleValidation,
-    textfieldValidationMidleware,
+    validationMidleware,
   async  (req: Request, res: Response) => {
         try {
             const {todolistID, taskID} = req.params;

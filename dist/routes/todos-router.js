@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.todosRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const textfieldValidationMidleware_1 = require("../midlewares/textfieldValidationMidleware");
+const validationMidleware_1 = require("../midlewares/validationMidleware");
 const basicValidations_1 = require("../midlewares/basicValidations");
 const switchErrors_1 = require("../midlewares/switchErrors");
 const todos_service_1 = require("../domain/todos-service");
@@ -30,7 +30,7 @@ exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.send(foundTodos);
     }
 }));
-exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.post("/", basicValidations_1.titleValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.body;
     const postedTodos = yield todos_service_1.todosService.postTodo(title);
     if (postedTodos) {
@@ -40,7 +40,7 @@ exports.todosRouter.post("/", basicValidations_1.titleValidation, textfieldValid
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, title, priority = "medium" } = req.body;
     try {
         const postedTask = yield todos_service_1.todosService.postTask(id, title, priority);
@@ -93,7 +93,7 @@ exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) =
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleValidation, textfieldValidationMidleware_1.textfieldValidationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { todolistID, taskID } = req.params;
         const { title } = req.body;
