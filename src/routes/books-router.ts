@@ -2,11 +2,12 @@ import express, {Request, Response} from "express";
 import {BookType, PaginationResult} from "../repositories/books-repository";
 import { body, validationResult } from 'express-validator';
 import {booksService} from "../domain/books-service";
+import {authMiddleware} from "../midlewares/authMiddleware";
 
 export const booksRouter = express.Router();
 
 
-booksRouter.get("/", async (req: Request, res: Response) => {
+booksRouter.get("/",authMiddleware, async (req: Request, res: Response) => {
     const order = req.query.order === 'desc' ? 'desc' : 'asc';
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;

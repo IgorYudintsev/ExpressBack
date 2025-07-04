@@ -9,6 +9,7 @@ import {BookType} from "./repositories/books-repository";
 import {TodoType} from "./repositories/todos-repository";
 import {client, connectToDb} from "./db/mongoDB";
 
+
 import {UserType} from "./repositories/auth-repository"; // если ты завёл отдельный репозиторий
 app.use(express.json());// Добавляем middleware для парсинга JSON тела которое приходит в post
 app.use(cors()); // Включаем CORS, чтобы разрешить запросы с других доменов

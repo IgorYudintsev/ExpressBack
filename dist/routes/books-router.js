@@ -16,8 +16,9 @@ exports.booksRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const books_service_1 = require("../domain/books-service");
+const authMiddleware_1 = require("../midlewares/authMiddleware");
 exports.booksRouter = express_1.default.Router();
-exports.booksRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.booksRouter.get("/", authMiddleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const order = req.query.order === 'desc' ? 'desc' : 'asc';
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
