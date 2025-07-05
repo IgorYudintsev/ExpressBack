@@ -16,8 +16,7 @@ booksRouter.get("/",authMiddleware, async (req: Request, res: Response) => {
     res.send(foundBooks);
 });
 
-
-booksRouter.post("/",
+booksRouter.post("/",authMiddleware,
     body('volume').isLength({min:3, max:30}),
     async (req: Request, res: Response)=> {
 
@@ -31,8 +30,7 @@ booksRouter.post("/",
         res.status(201).json(newBook);
     });
 
-
-booksRouter.delete("/:id", async (req: Request, res: Response) => {
+booksRouter.delete("/:id",authMiddleware, async (req: Request, res: Response) => {
     const { deleted } = await booksService.deleteBooks(req.params.id);
 
     if (deleted) {

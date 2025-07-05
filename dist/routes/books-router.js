@@ -25,7 +25,7 @@ exports.booksRouter.get("/", authMiddleware_1.authMiddleware, (req, res) => __aw
     const foundBooks = yield books_service_1.booksService.getBooks(order, page, pageSize);
     res.send(foundBooks);
 }));
-exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({ min: 3, max: 30 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.booksRouter.post("/", authMiddleware_1.authMiddleware, (0, express_validator_1.body)('volume').isLength({ min: 3, max: 30 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(400).json({ error: "Invalid volume: min:1, max:30" });
@@ -34,7 +34,7 @@ exports.booksRouter.post("/", (0, express_validator_1.body)('volume').isLength({
     const newBook = yield books_service_1.booksService.postBooks(volume);
     res.status(201).json(newBook);
 }));
-exports.booksRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.booksRouter.delete("/:id", authMiddleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { deleted } = yield books_service_1.booksService.deleteBooks(req.params.id);
     if (deleted) {
         res.status(200).json({ deleted: true });
