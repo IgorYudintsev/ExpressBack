@@ -18,8 +18,9 @@ const validationMidleware_1 = require("../midlewares/validationMidleware");
 const basicValidations_1 = require("../midlewares/basicValidations");
 const switchErrors_1 = require("../midlewares/switchErrors");
 const todos_service_1 = require("../domain/todos-service");
+const authMiddleware_1 = require("../midlewares/authMiddleware");
 exports.todosRouter = express_1.default.Router();
-exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.get("/", authMiddleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const foundTodos = yield todos_service_1.todosService.getTodos(page, pageSize);
@@ -30,7 +31,7 @@ exports.todosRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.send(foundTodos);
     }
 }));
-exports.todosRouter.post("/", basicValidations_1.titleValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.post("/", authMiddleware_1.authMiddleware, basicValidations_1.titleValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title } = req.body;
     const postedTodos = yield todos_service_1.todosService.postTodo(title);
     if (postedTodos) {
@@ -40,7 +41,7 @@ exports.todosRouter.post("/", basicValidations_1.titleValidation, validationMidl
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.post("/task", authMiddleware_1.authMiddleware, basicValidations_1.titleValidation, basicValidations_1.idValidation, basicValidations_1.priorityValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, title, priority = "medium" } = req.body;
     try {
         const postedTask = yield todos_service_1.todosService.postTask(id, title, priority);
@@ -55,7 +56,7 @@ exports.todosRouter.post("/task", basicValidations_1.titleValidation, basicValid
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.delete("/:id", authMiddleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { deleted } = yield todos_service_1.todosService.deleteTodo(req.params.id);
     if (deleted) {
         res.send({ deleted: true });
@@ -64,7 +65,7 @@ exports.todosRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 
         res.status(404).json({ message: "Todo Not Found" });
     }
 }));
-exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.delete("/:todolistID/tasks/:taskID", authMiddleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { todolistID, taskID } = req.params;
         const { deleted } = yield todos_service_1.todosService.deleteTask(todolistID, taskID);
@@ -78,7 +79,7 @@ exports.todosRouter.delete("/:todolistID/tasks/:taskID", (req, res) => __awaiter
         (0, switchErrors_1.switchErrors)(res, error.message);
     }
 }));
-exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.put("/:id", authMiddleware_1.authMiddleware, basicValidations_1.titleValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { title } = req.body;
         const updatedTodo = yield todos_service_1.todosService.putTodo(req.params.id, title);
@@ -93,7 +94,7 @@ exports.todosRouter.put("/:id", basicValidations_1.titleValidation, (req, res) =
         res.status(500).json({ error: "Internal server error" });
     }
 }));
-exports.todosRouter.put("/:todolistID/tasks/:taskID", basicValidations_1.titleValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.todosRouter.put("/:todolistID/tasks/:taskID", authMiddleware_1.authMiddleware, basicValidations_1.titleValidation, validationMidleware_1.validationMidleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { todolistID, taskID } = req.params;
         const { title } = req.body;

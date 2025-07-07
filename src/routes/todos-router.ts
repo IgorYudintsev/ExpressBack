@@ -4,10 +4,13 @@ import {validationMidleware} from "../midlewares/validationMidleware";
 import {idValidation, priorityValidation, titleValidation} from "../midlewares/basicValidations";
 import {switchErrors} from "../midlewares/switchErrors";
 import {todosService} from "../domain/todos-service";
+import {authMiddleware} from "../midlewares/authMiddleware";
 export const todosRouter = express.Router();
 
 
-todosRouter.get("/", async(req: Request, res: Response) => {
+todosRouter.get("/",
+    authMiddleware,
+    async(req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
 
@@ -20,6 +23,7 @@ todosRouter.get("/", async(req: Request, res: Response) => {
 });
 
 todosRouter.post("/",
+    authMiddleware,
     titleValidation,
     validationMidleware,
     async(req: Request, res: Response) => {
@@ -33,6 +37,7 @@ todosRouter.post("/",
     });
 
 todosRouter.post("/task",
+    authMiddleware,
     titleValidation,
     idValidation,
     priorityValidation,
@@ -55,6 +60,7 @@ todosRouter.post("/task",
     });
 
 todosRouter.delete("/:id",
+    authMiddleware,
     async(req: Request, res: Response) => {
     const { deleted } =await todosService.deleteTodo(req.params.id)
     if (deleted) {
@@ -65,6 +71,7 @@ todosRouter.delete("/:id",
 });
 
 todosRouter.delete("/:todolistID/tasks/:taskID",
+    authMiddleware,
     async (req: Request, res: Response) => {
     try {
         const {todolistID, taskID} = req.params;
@@ -80,6 +87,7 @@ todosRouter.delete("/:todolistID/tasks/:taskID",
 });
 
 todosRouter.put("/:id",
+    authMiddleware,
     titleValidation,
     async (req: Request, res: Response) => {
             try {
@@ -99,6 +107,7 @@ todosRouter.put("/:id",
 
 
 todosRouter.put("/:todolistID/tasks/:taskID",
+    authMiddleware,
     titleValidation,
     validationMidleware,
   async  (req: Request, res: Response) => {
